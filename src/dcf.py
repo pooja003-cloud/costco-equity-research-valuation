@@ -109,6 +109,47 @@ def value(wacc: float, g: float, ronic: float, fc: dict | None = None, tax: floa
     return out
 
 
+def value_with_extended_growth(wacc: float, g_high: float, years_high: int, g: float, ronic: float,
+                               fc: dict | None = None, cs: dict | None = None, tax: float | None = None) -> float:
+    """Value per share if, after FY2029, NOPAT keeps growing at `g_high` for `years_high` more years
+    before settling to terminal growth `g`. Reinvestment always matches growth: FCF = NOPAT x (1 - growth / RONIC).
+    With years_high = 0 this equals the base-case DCF."""
+    base = value(wacc, g, ronic, fc=fc, cs=cs, tax=tax, detail=True)
+    t = base["table"]
+    tax = base["tax"]
+    n = base["shares_diluted"]
+    t_last = t["discount_time_yrs"].iloc[-1]
+    nopat = t["ebit"].iloc[-1] * (1 - tax)
+    pv_extra = 0.0
+    for k in range(1, years_high + 1):
+        nopat *= 1 + g_high
+        pv_extra += nopat * (1 - g_high / ronic) / (1 + wacc) ** (t_last + k)
+    nopat_next = nopat * (1 + g)
+    tv = nopat_next * (1 - g / ronic) / (wacc - g)
+    pv_tv = tv / (1 + wacc) ** (t_last + years_high)
+    ev = base["sum_pv_ufcf"] + pv_extra + pv_tv
+    return (ev + base["net_cash"]) / n
+
+
+def growth_duration_table(wacc: float, g: float, ronic_list=(0.25, 0.30), g_high_list=(0.06, 0.07, 0.08, 0.10),
+                          price: float | None = None, fc=None, cs=None, max_years: int = 100) -> pd.DataFrame:
+    """Reverse DCF in years: how long must high growth last (at high returns) for the DCF to reach the share price?"""
+    rows = []
+    for ronic in ronic_list:
+        for gh in g_high_list:
+            years = None
+            for y in range(0, max_years + 1):
+                if value_with_extended_growth(wacc, gh, y, g, ronic, fc=fc, cs=cs) >= price:
+                    years = y
+                    break
+            limit = value_with_extended_growth(wacc, gh, max_years, g, ronic, fc=fc, cs=cs)
+            rows.append({"ronic": ronic, "high_growth_rate": gh, "years_after_fy2029_needed": years,
+                         "value_if_it_lasts_10y": value_with_extended_growth(wacc, gh, 10, g, ronic, fc=fc, cs=cs),
+                         "value_if_it_lasts_20y": value_with_extended_growth(wacc, gh, 20, g, ronic, fc=fc, cs=cs),
+                         f"value_if_it_lasts_{max_years}y": limit})
+    return pd.DataFrame(rows)
+
+
 def solve(f, lo: float, hi: float, target: float, tol: float = 1e-7) -> float:
     """Bisection: find x in [lo, hi] with f(x) = target (f monotonic)."""
     flo = f(lo) - target
@@ -140,8 +181,11 @@ def main() -> dict:
     r["value_with_peer_beta_wacc"] = value(w["wacc_with_peer_beta"], g, ronic, fc=fc, cs=cs)
     r["value_cash_excluded"] = r["value_per_share"] - r["cash_and_sti"] / r["shares_diluted"]
 
+    r["growth_duration"] = growth_duration_table(w["wacc"], g, price=price, fc=fc, cs=cs)
+
     TABLES.mkdir(parents=True, exist_ok=True)
     r["table"].T.to_csv(TABLES / "dcf_ufcf.csv", float_format="%.6g")
+    r["growth_duration"].to_csv(TABLES / "reverse_dcf_growth_duration.csv", index=False, float_format="%.6g")
     summary = [
         ("WACC", r["wacc"]), ("Terminal growth", g), ("Terminal RONIC", ronic),
         ("Sum of PV of UFCF (stub FY25 - FY29)", r["sum_pv_ufcf"]), ("Terminal value (undiscounted)", r["terminal_value"]),
@@ -164,6 +208,7 @@ def main() -> dict:
                       "discount_time_yrs", "pv_ufcf"]].round(2).T.to_string())
     for k, v in summary:
         print(f"{k:58s} {v:,.4f}")
+    print(r["growth_duration"].round(3).to_string())
     return r
 
 

@@ -68,3 +68,9 @@ def test_stub_period(r):
     assert t["period_fraction"].iloc[0] == pytest.approx(280 / 364, abs=0.01)   # 24 Nov 2024 - 31 Aug 2025
     assert (t["period_fraction"].iloc[1:] == 1).all()
     assert t["discount_time_yrs"].is_monotonic_increasing
+
+
+def test_extended_growth_with_zero_years_equals_base_case(r):
+    from src.dcf import value_with_extended_growth
+    assert value_with_extended_growth(r["wacc"], 0.07, 0, r["g"], r["ronic"]) == pytest.approx(r["value_per_share"])
+    assert value_with_extended_growth(r["wacc"], 0.07, 10, r["g"], r["ronic"]) > r["value_per_share"]

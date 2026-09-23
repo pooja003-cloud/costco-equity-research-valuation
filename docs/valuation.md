@@ -95,7 +95,27 @@ Holding the base-case forecast fixed, the market price requires **one** of the f
 
 At the price, Costco trades at **34× FY2025E EBITDA and 57× FY2025E EPS**; the DCF value corresponds to 11.5× EBITDA.
 
-**Interpretation.** The market is not paying for the next five years. The PV of FY2025–29 cash flow is only **$61** of the $980 price. It is paying for decades of above-economy growth at high returns and very low perceived risk.
+### How long would high growth have to last?
+
+"7% growth forever" is abstract, so the table below asks a more concrete question. After FY2029, how many more years would Costco need to grow at a high rate before settling to 3%?
+
+The test is deliberately generous. Reinvestment always matches growth: FCF = NOPAT × (1 − growth ÷ RONIC), with RONIC at 25%.
+
+| Growth rate after FY2029 | Value if it lasts 10 years | 20 years | 100 years | Years needed to justify $980 |
+|---|---:|---:|---:|---:|
+| 6% | $390 | $433 | $575 | never |
+| 7% | $411 | $475 | $780 | never |
+| 8% | $433 | $525 | $1,159 | 76 |
+| 10% | $482 | $650 | $3,425 | 37 |
+
+At the peer-beta WACC of 7.23%, 7% growth would need 53 more years and 10% growth 22 years (`outputs/tables/reverse_dcf_growth_duration.csv`).
+For scale, 10% growth for 37 years would make Costco about 34 times its FY2029 size.
+
+**Interpretation.**
+- **The short forecast horizon is not what drives the gap.** Even with generous extensions, a standard CAPM discount rate cannot reach the price.
+- **The market is pricing something else.** The price is consistent with either many decades of high growth, or a much lower required return: investors treating Costco's membership income as close to bond-like (the 4.8% implied WACC).
+- **Only $61 of the $980 comes from FY2025–29 cash flow.**
+- **What the DCF does and doesn't show.** It does not prove the stock will fall. It shows that the price depends on either very long-lived growth or a very low discount rate. Phase 5 (comparable companies) tests whether that is specific to Costco.
 
 ## 6. Method choices that move the answer
 

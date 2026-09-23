@@ -58,8 +58,9 @@ The three statements are fully linked, and tests confirm the balance sheet balan
 | Share price (31 Jan 2025) | $979.88 |
 | Terminal growth the price implies | 7.0% |
 
-The DCF says the market is paying for decades of above-economy growth. The next five years of cash flow account for
-only $61 of the $980 share price. Full workings, method choices and limitations: [docs/valuation.md](docs/valuation.md).
+The next five years of cash flow account for only $61 of the $980 share price. Even if growth continued at 7% a year
+for another 100 years (instead of fading to 3%), the DCF would reach about $780. The price requires either many
+decades of high growth or a much lower required return (4.8% WACC) than CAPM gives. Full workings, method choices and limitations: [docs/valuation.md](docs/valuation.md).
 
 ![DCF bridge](outputs/charts/11_dcf_bridge.png)
 
