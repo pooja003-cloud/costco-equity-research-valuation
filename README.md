@@ -14,7 +14,7 @@ Only filings public by this date are used.
 | Phase | Scope | Status |
 |---|---|---|
 | 1. Data | SEC EDGAR / XBRL extraction, source tracking, 30 integrity tests | **Done**, see [docs/data_sources.md](docs/data_sources.md) |
-| 2. Historical analysis | Three statements, ratios, trend notebook | Not started |
+| 2. Historical analysis | Growth, margins, membership, ROIC, working capital, cash flow | **Done**, see [findings](docs/historical_analysis.md) and the [notebook](notebooks/01_historical_analysis.ipynb) |
 | 3. Forecast | FY2025–FY2029 operating drivers | Not started |
 | 4. WACC & DCF | Cost of capital, UFCF, terminal value | Not started |
 | 5. Comparable companies | Peer selection, multiples | Not started |
@@ -35,6 +35,17 @@ docs/            methodology, data sources, assumptions
 outputs/         model, tables, charts, memo, slides
 tests/           data-integrity and model tests
 ```
+
+## Historical analysis: highlights
+
+- **Membership fees are 1.9% of revenue but 52% of operating income** (FY2024), with a 92.9% U.S./Canada renewal rate.
+- **~30% return on invested capital**, while capex runs at about 2x depreciation to fund new warehouses.
+- **Negative working capital (about −5% of revenue):** suppliers and members finance growth.
+- **Growth normalized** after the FY2021–22 surge to 5–6% comparable sales (ex gas & FX) plus ~2 points from new warehouses.
+
+![Profit engine](outputs/charts/03_profit_engine.png)
+
+More in [docs/historical_analysis.md](docs/historical_analysis.md) and the [chart pack](outputs/charts/).
 
 ## Data
 
@@ -60,5 +71,8 @@ export SEC_USER_AGENT="Your Name your.email@example.com"   # the SEC requires co
 python -m src.sec_fetch
 python -m src.extract_financials
 python -m src.operating_metrics
+python -m src.historical           # metrics -> outputs/tables/
+python -m src.charts               # chart pack -> outputs/charts/
 python -m pytest -q
+jupyter notebook notebooks/01_historical_analysis.ipynb
 ```
