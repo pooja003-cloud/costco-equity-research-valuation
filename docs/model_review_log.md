@@ -8,3 +8,4 @@ the cause is identified: for example the mid-year convention, the tax rate, or h
 |---|---|---|---|---|---|---|
 | 1 | | 3 – Forecast | ClaudeFinanceLab: Three-Statement Forecasting | | | |
 | 2 | | 4 – WACC & DCF | ClaudeFinanceLab: DCF Model Builder | | | |
+| 3 | | 5 – Comparable companies | ClaudeFinanceLab: Comparable Company Analysis | | | |

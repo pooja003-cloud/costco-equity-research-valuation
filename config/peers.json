@@ -1,0 +1,18 @@
+{
+  "_about": "Peer set for the comparable-company analysis. The tiers reflect how close each business model is to Costco's. Rationale per peer is in docs/comps.md.",
+  "tiers": {
+    "WMT": "1 - Membership warehouse / scale grocery",
+    "BJ": "1 - Membership warehouse / scale grocery",
+    "TGT": "2 - Mass merchant / supermarket",
+    "KR": "2 - Mass merchant / supermarket",
+    "DG": "3 - Value / discount",
+    "DLTR": "3 - Value / discount"
+  },
+  "excluded": {
+    "AMZN": "Earnings driven by AWS and advertising, so retail economics are not separable",
+    "SFM, ACI": "Sprouts is a niche natural-food grocer. Albertsons was under a pending merger with Kroger during 2024, which distorted its price"
+  },
+  "negative_or_distorted": {
+    "DLTR": "LTM GAAP operating income is negative after Family Dollar goodwill and asset impairments. EV/EBITDA and P/E are not meaningful; only EV/Revenue is used."
+  }
+}

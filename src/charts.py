@@ -315,10 +315,39 @@ def dcf_bridge() -> None:
     _save(fig, "11_dcf_bridge.png")
 
 
+def comps_chart() -> None:
+    """EV/EBITDA and P/E: Costco vs. peers (LTM, 31 Jan 2025)."""
+    import contextlib, io
+    from src.comps import build as comps_build
+    with contextlib.redirect_stdout(io.StringIO()):
+        df, stats, implied = comps_build()
+    names = {"COST": "Costco", "WMT": "Walmart", "BJ": "BJ's", "TGT": "Target", "KR": "Kroger", "DG": "Dollar General",
+             "DLTR": "Dollar Tree"}
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), gridspec_kw={"wspace": 0.45})
+    fig.subplots_adjust(top=0.78, bottom=0.13, left=0.11, right=0.97)
+    for ax, col, title in [(axes[0], "ev_ebitda", "EV / LTM EBITDA"), (axes[1], "pe", "Price / LTM earnings")]:
+        d = df[col].dropna().sort_values()
+        ys = list(range(len(d)))
+        ax.barh(ys, d.values, height=0.55, color=[S2 if t == "COST" else S1 for t in d.index])
+        for y, (t, v) in zip(ys, d.items()):
+            ax.text(v + d.max() * 0.015, y, f"{v:.1f}x", va="center", fontsize=9, fontweight="bold" if t == "COST" else None,
+                    bbox=dict(facecolor=SURFACE, edgecolor="none", pad=1.0), zorder=4)
+        med = stats.loc[col, "peer_median"]
+        ax.axvline(med, color=INK2, linewidth=1, zorder=1)
+        ax.set_yticks(ys, [names[t] for t in d.index]); ax.grid(axis="y", visible=False); ax.grid(axis="x", visible=True)
+        ax.set_xlim(0, d.max() * 1.18)
+        ax.set_title(f"{title}  (vertical line = peer median, {med:.1f}x)", loc="left", fontsize=10, color=INK2)
+    prem = stats.loc["ev_ebitda", "costco"] / stats.loc["ev_ebitda", "peer_median"]
+    _title(fig, f"Costco trades at {prem:.1f}x the peer median EV/EBITDA and above Walmart",
+           "LTM to each company's latest quarter before 31 Jan 2025, 52-week basis, GAAP. Dollar Tree is not shown: LTM EBITDA and earnings are negative (impairments).",
+           SOURCE.replace("Costco 10-K filings FY2020–FY2024 (SEC EDGAR)", "SEC XBRL company facts; Yahoo Finance"))
+    _save(fig, "12_comps_multiples.png")
+
+
 def main() -> None:
     m = compute_metrics()
     revenue_and_growth(m); growth_decomposition(m); profit_engine(m); margins(m)
-    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview(); dcf_bridge()
+    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview(); dcf_bridge(); comps_chart()
     print(f"{len(list(CHARTS.glob('*.png')))} charts written to outputs/charts/")
 
 

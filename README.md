@@ -64,6 +64,20 @@ decades of high growth or a much lower required return (4.8% WACC) than CAPM giv
 
 ![DCF bridge](outputs/charts/11_dcf_bridge.png)
 
+## Comparable companies
+
+| LTM, 31 Jan 2025 | EV/EBITDA | P/E | Implied Costco value (peer median EV/EBITDA) |
+|---|---:|---:|---:|
+| Costco | 36.5x | 57.4x | |
+| Walmart | 20.2x | 40.3x | |
+| Peer median (WMT, BJ, TGT, KR, DG, DLTR) | 8.7x | 16.4x | $240 |
+| Tier 1 median (WMT, BJ) | 16.7x | 32.1x | $452 |
+
+Every peer-based value ($208–$570 per share) is closer to the DCF ($337) than to the $980 price. Costco's premium is
+company-specific; the sector is not generally priced this high. Peer rationale and method: [docs/comps.md](docs/comps.md).
+
+![Comps](outputs/charts/12_comps_multiples.png)
+
 ## Data
 
 FY2020–FY2024 historical data (and the FY2019 opening balance sheet) is extracted straight from the
@@ -94,6 +108,7 @@ python -m src.forecast             # three-statement forecast -> outputs/tables/
 python -m src.market_fetch         # market data (see note in docs/valuation.md if blocked)
 python -m src.wacc                 # cost of capital -> outputs/tables/wacc.csv
 python -m src.dcf                  # DCF -> outputs/tables/dcf_*.csv
+python -m src.comps                # comparable companies -> outputs/tables/comps*.csv
 python -m src.charts               # chart pack -> outputs/charts/
 python -m pytest -q
 jupyter notebook notebooks/01_historical_analysis.ipynb
