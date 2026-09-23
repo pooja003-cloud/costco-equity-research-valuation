@@ -9,19 +9,6 @@ a DCF valuation, a WACC build, comparable-company analysis, sensitivity analysis
 **Valuation date:** 31 January 2025. All market inputs (share prices, risk-free rate, peer multiples) are as of this date.
 Only filings public by this date are used.
 
-## Project status
-
-| Phase | Scope | Status |
-|---|---|---|
-| 1. Data | SEC EDGAR / XBRL extraction, source tracking, 30 integrity tests | **Done**, see [docs/data_sources.md](docs/data_sources.md) |
-| 2. Historical analysis | Growth, margins, membership, ROIC, working capital, cash flow | **Done**, see [findings](docs/historical_analysis.md) and the [notebook](notebooks/01_historical_analysis.ipynb) |
-| 3. Forecast | Driver-based, integrated three-statement model FY2025–FY2029 | **Done**, see [assumptions](docs/assumptions.md) |
-| 4. WACC & DCF | Cost of capital, UFCF, terminal value | Not started |
-| 5. Comparable companies | Peer selection, multiples | Not started |
-| 6. Sensitivity & scenarios | WACC × g, revenue × margin, bear/base/bull | Not started |
-| 7. Excel model | Fully linked workbook | Not started |
-| 8. Memo & slides | Two-page memo, thesis slide, risks slide | Not started |
-
 ## Repository layout
 
 ```
