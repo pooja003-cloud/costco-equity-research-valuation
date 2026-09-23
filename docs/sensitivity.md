@@ -104,6 +104,6 @@ WACC is held at 8.38% in all three scenarios, so they isolate *business* outcome
 
 The sensitivities show that no single operating assumption closes the gap to the price. The view would change with evidence of one of these:
 
-1. **A structurally lower cost of capital for Costco.** For example, beta and volatility falling as the stock trades like a bond proxy. A WACC below about 6% would lift the value toward $600+.
+1. **A structurally lower cost of capital for Costco.** For example, beta and volatility falling as the stock trades like a bond proxy. A 6.0% WACC gives about $596, and 5.5% gives about $713.
 2. **A much longer growth runway than modelled.** International warehouse growth sustaining 8–10% growth for decades (see the reverse DCF in `docs/valuation.md`).
 3. **A step-change in margin or fee income beyond the base case.** For example, faster fee increases, or a large higher-margin revenue stream such as retail media or financial services.
