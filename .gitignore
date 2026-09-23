@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+.pytest_cache/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Office lock files
+~$*
+
+# Raw SEC downloads are large and fully reproducible with `python -m src.sec_fetch`.
+# data/raw/manifest.csv (committed) records the URL, date and SHA-256 of every file.
+data/raw/sec/
+data/raw/filings/

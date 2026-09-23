@@ -1,0 +1,19 @@
+{
+  "company": {"ticker": "COST", "name": "Costco Wholesale Corporation", "cik": 909832},
+  "valuation_date": "2025-01-31",
+  "historical_fiscal_years": [2020, 2021, 2022, 2023, 2024],
+  "fiscal_year_note": "Costco's fiscal year ends on the Sunday nearest August 31 (FY2023 was a 53-week year).",
+  "peers": {
+    "WMT":  {"name": "Walmart Inc.",                  "cik": 104169},
+    "BJ":   {"name": "BJ's Wholesale Club Holdings",  "cik": 1531152},
+    "TGT":  {"name": "Target Corporation",            "cik": 27419},
+    "DG":   {"name": "Dollar General Corporation",    "cik": 29534},
+    "DLTR": {"name": "Dollar Tree, Inc.",             "cik": 935703},
+    "KR":   {"name": "The Kroger Co.",                "cik": 56873}
+  },
+  "peer_note": "Candidate peer universe only. Final peer set and rationale are decided in Phase 5.",
+  "sec": {
+    "user_agent_env_var": "SEC_USER_AGENT",
+    "request_pause_seconds": 0.25
+  }
+}
