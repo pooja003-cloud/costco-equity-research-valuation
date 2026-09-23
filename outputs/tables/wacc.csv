@@ -1,0 +1,17 @@
+item,value
+"Risk-free rate (10y UST, 31 Jan 2025)",0.0458
+"Equity risk premium (Damodaran, Jan 2025)",0.0433
+"Raw beta (Feb 2020 - Jan 2025, monthly)",0.842626
+Adjusted beta (Blume),0.894559
+Cost of equity,0.0845344
+Credit spread (avg AA/A OAS),0.00575
+Pre-tax cost of debt,0.05155
+Tax rate,0.26
+After-tax cost of debt,0.038147
+Equity market value ($m),435852
+Debt incl. finance leases ($m),6771
+Weight of equity,0.984703
+Weight of debt,0.0152974
+WACC,0.0838248
+Cross-check: peer median beta relevered (Blume),0.624678
+Cross-check: WACC with peer beta,0.0723177

@@ -47,6 +47,22 @@ The three statements are fully linked, and tests confirm the balance sheet balan
 | Diluted EPS ($) | 16.56 | 17.31 | 23.13 |
 | Free cash flow | 6,629 | 7,032 | 9,240 |
 
+## Valuation (as of 31 Jan 2025)
+
+| | |
+|---|---:|
+| WACC (CAPM: Rf 4.58%, beta 0.89, ERP 4.33%) | 8.38% |
+| Terminal growth / RONIC | 3.0% / 25% |
+| Enterprise value | $145.3bn |
+| **DCF value per share** | **$337** |
+| Share price (31 Jan 2025) | $979.88 |
+| Terminal growth the price implies | 7.0% |
+
+The DCF says the market is paying for decades of above-economy growth. The next five years of cash flow account for
+only $61 of the $980 share price. Full workings, method choices and limitations: [docs/valuation.md](docs/valuation.md).
+
+![DCF bridge](outputs/charts/11_dcf_bridge.png)
+
 ## Data
 
 FY2020–FY2024 historical data (and the FY2019 opening balance sheet) is extracted straight from the
@@ -74,6 +90,9 @@ python -m src.operating_metrics
 python -m src.historical           # metrics -> outputs/tables/
 python -m src.extract_quarter      # Q1 FY2025 10-Q (latest quarter before the valuation date)
 python -m src.forecast             # three-statement forecast -> outputs/tables/forecast_*.csv
+python -m src.market_fetch         # market data (see note in docs/valuation.md if blocked)
+python -m src.wacc                 # cost of capital -> outputs/tables/wacc.csv
+python -m src.dcf                  # DCF -> outputs/tables/dcf_*.csv
 python -m src.charts               # chart pack -> outputs/charts/
 python -m pytest -q
 jupyter notebook notebooks/01_historical_analysis.ipynb

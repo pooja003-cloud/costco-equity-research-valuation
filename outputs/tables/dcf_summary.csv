@@ -1,0 +1,25 @@
+item,value
+WACC,0.0838248
+Terminal growth,0.03
+Terminal RONIC,0.25
+Sum of PV of UFCF (stub FY25 - FY29),27211.8
+Terminal value (undiscounted),164058
+PV of terminal value,118059
+Enterprise value,145271
+Terminal value as % of EV,0.812682
++ Cash and short-term investments,11827
+- Debt (carrying value),5842
+- Finance lease liabilities,1498
+Equity value,149758
+Diluted shares (m),444.802
+Value per share ($),336.684
+Share price 31 Jan 2025 ($),979.88
+Upside / (downside),-0.656403
+Implied terminal EV/EBITDA (FY2029),9.9162
+Market EV / FY2025E EBITDA,34.1656
+DCF EV / FY2025E EBITDA,11.5059
+Reverse DCF: terminal growth implied by price,0.0704914
+Reverse DCF: WACC implied by price,0.0481226
+Reverse DCF: ERP implied by price (beta held),0.00276965
+Cross-check: value per share at peer-beta WACC,425.341
+Cross-check: value per share treating all cash as operating,310.094

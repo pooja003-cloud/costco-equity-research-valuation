@@ -1,0 +1,43 @@
+{
+  "_about": "WACC and DCF parameters. Market inputs are read from data/raw/market/ as of the 31 Jan 2025 valuation date. Judgement calls are set here, each with its rationale.",
+
+  "risk_free": {
+    "source": "FRED DGS10 on the valuation date",
+    "rationale": "10-year U.S. Treasury yield: a long-duration default-free rate that matches the horizon of an equity valuation. It is also the rate Damodaran uses to derive his implied ERP, so risk-free rate and ERP are consistent."
+  },
+  "equity_risk_premium": {
+    "value_source": "Damodaran implied ERP (FCFE), start of 2025 (year-end 2024 row of histimpl.xls)",
+    "rationale": "A forward-looking premium implied by S&P 500 prices and expected cash flows at 1 Jan 2025, the most recent estimate before the valuation date. Historical-average premiums (about 5%+) are shown as a sensitivity."
+  },
+  "beta": {
+    "method": "own_regression_blume",
+    "months": 60,
+    "blume_weight": 0.67,
+    "rationale": "Costco's own 60-month regression against the S&P 500 (Feb 2020 - Jan 2025) is statistically the best-determined estimate (R-squared 0.44, standard error 0.12). The peer regressions are noisy (R-squared 0.03-0.39). The Blume adjustment (0.67 x raw + 0.33) pulls the estimate toward 1.0, reflecting how betas tend to revert over time. The peer median beta, unlevered and relevered to Costco's capital structure, is reported as a cross-check."
+  },
+  "cost_of_debt": {
+    "method": "risk_free_plus_spread",
+    "spread_series": ["BAMLC0A2CAA", "BAMLC0A3CA"],
+    "rationale": "Pre-tax cost of debt = 10-year Treasury + the average of the ICE BofA AA and A corporate option-adjusted spreads. Costco is a high-grade issuer with more cash than debt. Debt is under 2% of capital, so this input barely moves WACC."
+  },
+  "tax_rate": 0.26,
+  "debt_definition": {
+    "include": ["senior notes and other long-term debt (carrying value; fair value for WACC weights)", "finance lease liabilities"],
+    "exclude": ["operating lease liabilities"],
+    "rationale": "Under ASC 842, operating lease cost sits inside SG&A and is therefore already deducted in EBIT and in UFCF. Counting operating leases as debt as well would double-count them. Finance lease interest and amortization sit below EBIT (in interest expense and D&A), so finance leases are treated as debt."
+  },
+  "cash_treatment": {
+    "operating_cash_requirement": 0,
+    "rationale": "All cash and short-term investments are treated as non-operating. Costco runs negative working capital, so it needs little operating cash. Treating the cash as excess adds about $26/share; the sensitivity is shown in docs/valuation.md."
+  },
+  "terminal": {
+    "growth": 0.030,
+    "ronic": 0.25,
+    "rationale_growth": "3.0% nominal perpetual growth. That is below expected long-run nominal GDP (about 4%) and below the 4.58% risk-free rate, as a perpetuity must be. Costco still has international runway, but no company can outgrow the economy forever. 2.5-3.5% is tested in Phase 6.",
+    "rationale_ronic": "The terminal cash flow uses the value-driver formula: FCF = NOPAT x (1 - g / RONIC), so reinvestment matches the growth assumed. ROIC was about 30% in FY2021-24 (incremental about 49%). 25% assumes the membership moat keeps returns well above WACC but not at today's level. 15-35% is tested in Phase 6."
+  },
+  "timing": {
+    "mid_year_convention": true,
+    "rationale": "Cash flows arrive through the year, so each is discounted from the middle of its period. Net debt comes from the latest balance sheet (24 Nov 2024, the Q1 FY2025 10-Q). So the first period is the rest of FY2025 after that date (40 of 52 weeks), discounted from the valuation date to the midpoint of that stub. The terminal value is discounted consistently with mid-year flows: the first perpetuity cash flow is received mid-FY2030."
+  }
+}

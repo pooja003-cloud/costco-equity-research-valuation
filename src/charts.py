@@ -277,10 +277,48 @@ def forecast_overview() -> None:
     _save(fig, "10_forecast_overview.png")
 
 
+def dcf_bridge() -> None:
+    """Per-share build of the DCF value vs. the 31 Jan 2025 share price."""
+    from matplotlib.patches import Patch
+    from src.dcf import main as dcf_main
+    import contextlib, io
+    with contextlib.redirect_stdout(io.StringIO()):
+        r = dcf_main()
+    n = r["shares_diluted"]
+    parts = [("PV of FY2025-29 free cash flow", r["sum_pv_ufcf"] / n), ("PV of terminal value", r["pv_terminal_value"] / n),
+             ("Net cash (cash - debt - finance leases)", r["net_cash"] / n)]
+    fig, ax = plt.subplots(figsize=(10, 4.8))
+    fig.subplots_adjust(top=0.78, bottom=0.14, left=0.30, right=0.95)
+    labels, y = [], 0
+    rows = len(parts) + 2
+    base = 0.0
+    for idx, (lab, v) in enumerate(parts):
+        yy = rows - 1 - idx
+        ax.barh(yy, v, left=base, height=0.5, color=S1_LIGHT)
+        ax.text(base + v + 8, yy, f"${v:,.0f}", va="center", fontsize=9)
+        base += v
+        labels.append((yy, lab))
+    yy = 1
+    ax.barh(yy, r["value_per_share"], height=0.5, color=S1)
+    ax.text(r["value_per_share"] + 8, yy, f"${r['value_per_share']:,.0f}", va="center", fontsize=9, fontweight="bold")
+    labels.append((yy, "DCF value per share"))
+    ax.barh(0, r["price"], height=0.5, color=S2)
+    ax.text(r["price"] + 8, 0, f"${r['price']:,.0f}", va="center", fontsize=9, fontweight="bold")
+    labels.append((0, "Share price, 31 Jan 2025"))
+    ax.set_yticks([l[0] for l in labels], [l[1] for l in labels])
+    ax.grid(axis="y", visible=False); ax.grid(axis="x", visible=True)
+    ax.set_xlim(0, 1100); ax.xaxis.set_major_formatter(mt.StrMethodFormatter("${x:,.0f}"))
+    # every bar is named on the y-axis, so no legend box is needed
+    _title(fig, f"Base-case DCF: ${r['value_per_share']:,.0f} per share vs. ${r['price']:,.0f} market price",
+           f"WACC {r['wacc']:.2%}, terminal growth {r['g']:.1%}. The price implies {r['implied_g']:.1%} perpetual growth, or a {r['implied_wacc']:.1%} WACC.",
+           SOURCE.replace("author analysis", "Yahoo Finance, FRED, Damodaran; author analysis"))
+    _save(fig, "11_dcf_bridge.png")
+
+
 def main() -> None:
     m = compute_metrics()
     revenue_and_growth(m); growth_decomposition(m); profit_engine(m); margins(m)
-    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview()
+    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview(); dcf_bridge()
     print(f"{len(list(CHARTS.glob('*.png')))} charts written to outputs/charts/")
 
 
