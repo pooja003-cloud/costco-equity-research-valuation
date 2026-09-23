@@ -15,7 +15,7 @@ Only filings public by this date are used.
 |---|---|---|
 | 1. Data | SEC EDGAR / XBRL extraction, source tracking, 30 integrity tests | **Done**, see [docs/data_sources.md](docs/data_sources.md) |
 | 2. Historical analysis | Growth, margins, membership, ROIC, working capital, cash flow | **Done**, see [findings](docs/historical_analysis.md) and the [notebook](notebooks/01_historical_analysis.ipynb) |
-| 3. Forecast | FY2025–FY2029 operating drivers | Not started |
+| 3. Forecast | Driver-based, integrated three-statement model FY2025–FY2029 | **Done**, see [assumptions](docs/assumptions.md) |
 | 4. WACC & DCF | Cost of capital, UFCF, terminal value | Not started |
 | 5. Comparable companies | Peer selection, multiples | Not started |
 | 6. Sensitivity & scenarios | WACC × g, revenue × margin, bear/base/bull | Not started |
@@ -25,7 +25,7 @@ Only filings public by this date are used.
 ## Repository layout
 
 ```
-config/          settings.json (company, peers, valuation date)
+config/          settings.json (company, peers, valuation date), assumptions.json (forecast)
 src/             Python pipeline
 data/raw/        SEC downloads (git-ignored; manifest.csv is committed)
 data/manual/     figures hand-collected from filing text, each with a citation
@@ -46,6 +46,19 @@ tests/           data-integrity and model tests
 ![Profit engine](outputs/charts/03_profit_engine.png)
 
 More in [docs/historical_analysis.md](docs/historical_analysis.md) and the [chart pack](outputs/charts/).
+
+## Base-case forecast (FY2025–FY2029)
+
+Revenue is built from warehouse openings, comparable sales and membership fees (members × fee per member, including the
+Sep 2024 fee increase). Every assumption is tied to the filings and explained in [docs/assumptions.md](docs/assumptions.md).
+The three statements are fully linked, and tests confirm the balance sheet balances every year.
+
+| $m | FY24A | FY25E | FY29E |
+|---|---:|---:|---:|
+| Revenue | 254,453 | 273,712 | 349,529 |
+| Operating margin | 3.65% | 3.72% | 3.77% |
+| Diluted EPS ($) | 16.56 | 17.31 | 23.13 |
+| Free cash flow | 6,629 | 7,032 | 9,240 |
 
 ## Data
 
@@ -72,6 +85,8 @@ python -m src.sec_fetch
 python -m src.extract_financials
 python -m src.operating_metrics
 python -m src.historical           # metrics -> outputs/tables/
+python -m src.extract_quarter      # Q1 FY2025 10-Q (latest quarter before the valuation date)
+python -m src.forecast             # three-statement forecast -> outputs/tables/forecast_*.csv
 python -m src.charts               # chart pack -> outputs/charts/
 python -m pytest -q
 jupyter notebook notebooks/01_historical_analysis.ipynb

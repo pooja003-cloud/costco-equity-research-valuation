@@ -1,0 +1,106 @@
+{
+  "_about": "Base-case forecast assumptions, FY2025-FY2029. Every value has a rationale and the evidence behind it. Only information public by the 31 Jan 2025 valuation date is used. Edit a value here and re-run `python -m src.forecast`.",
+  "forecast_years": [2025, 2026, 2027, 2028, 2029],
+  "base_year": 2024,
+
+  "warehouses": {
+    "net_new": {"2025": 26, "2026": 27, "2027": 27, "2028": 27, "2029": 27},
+    "rationale": "FY2025: management plans 29 openings including 3 relocations, so 26 net (Q1 FY2025 10-Q). FY2026-29: 27 a year, the average of FY2024 actual (29) and FY2025 plan (26). This is above the FY2021-23 pace of 20-23 because the opening pipeline has accelerated.",
+    "evidence": ["Q1 FY2025 10-Q: 7 opened in Q1, 22 more planned", "FY2021-24 net new: 20, 23, 23, 29"]
+  },
+
+  "comparable_sales_growth": {
+    "values": {"2025": 0.055, "2026": 0.050, "2027": 0.045, "2028": 0.040, "2029": 0.040},
+    "rationale": "Reported comps, including gasoline and FX. Q1 FY2025 total comps were 5% (7% excl. gas & FX; lower gas prices and a stronger dollar held the reported number back). FY2025 is set at 5.5%, assuming these headwinds ease a little. The rate then fades to 4.0% by FY2028: roughly 2-2.5% inflation plus 1.5-2% traffic and market-share gains. That is below the FY2023-24 ex-gas/FX run-rate of 5-6% and the FY2016-19 pre-pandemic average of about 5%, because a larger base makes high comps harder to sustain.",
+    "evidence": ["Q1 FY2025 comps 5% / 7% ex gas & FX", "FY2023-24 comps ex gas & FX 5%, 6%"]
+  },
+
+  "new_warehouse_productivity": {
+    "value": 0.65,
+    "rationale": "New warehouses open below the fleet average and ramp up over several years. Historically, net sales growth not explained by comps was about 0.6-0.7x net unit growth (FY2021 0.66, FY2022 0.70, FY2023 0.63, FY2024 0.60). Growth from new warehouses = 0.65 x net unit growth.",
+    "evidence": ["notebooks/01_historical_analysis.ipynb section 2"]
+  },
+
+  "paid_member_growth": {
+    "values": {"2025": 0.070, "2026": 0.065, "2027": 0.060, "2028": 0.055, "2029": 0.050},
+    "rationale": "Year-end paid members grew 6-8% a year in FY2021-24, averaging 7.0%, and were up 7.5% year on year at Q1 FY2025 (77.4m vs 72.0m). Growth fades toward 5% as more new warehouses open in existing markets, which lowers the member uplift per opening (a point the 10-Q itself makes).",
+    "evidence": ["Q1 FY2025 10-Q paid members 77.4m", "FY2020-24 paid members 58.1m -> 76.2m"]
+  },
+
+  "membership_fee_increase": {
+    "full_uplift_on_affected_fees": 0.0833,
+    "share_of_fee_income_affected": 0.85,
+    "recognition_by_year": {"2025": 0.5, "2026": 0.5},
+    "rationale": "Effective 1 Sep 2024, the U.S./Canada Gold Star and Business fee rose from $60 to $65 (+8.3%) and the Executive fee from $120 to $130 (+8.3%), as disclosed in the FY2024 10-K. Affected share = 85%, a proxy based on U.S. and Canada being 86% of revenue (Costco does not split fee income by segment). Fees are recognized over the 12-month membership term and renewals are spread across the year, so about half the uplift lands in FY2025 and the rest in FY2026. Net effect: fee per member +3.5% in FY2025 and +3.5% in FY2026.",
+    "evidence": ["FY2024 10-K Item 1 (verified quote in data/manual/operating_metrics.csv)"]
+  },
+  "fee_per_member_other_growth": {
+    "value": 0.0,
+    "rationale": "Apart from fee increases, fee income per average paid member was flat at about $65-66 in FY2021-24: more Executive upgrades were offset by growth in lower-fee international members. The next fee increase (historically every 5.5-7 years: 2011, 2017, 2024) would fall around FY2030-31, after the explicit forecast, so it is not included. It is an upside to the terminal value.",
+    "evidence": ["historical_metrics.csv fee_per_avg_paid_member"]
+  },
+
+  "gross_margin_on_net_sales": {
+    "values": {"2025": 0.110, "2026": 0.110, "2027": 0.110, "2028": 0.110, "2029": 0.110},
+    "rationale": "FY2024 was 10.92%. Q1 FY2025 rose 24bp year on year (7bp excluding gasoline deflation), helped by core merchandise mix and the co-branded credit card. The model holds 11.0%, at the upper end of the FY2020-24 range (10.5-11.2%). The model assumes no further expansion because Costco reinvests margin in price, and the higher Executive reward cap ($1,250 from $1,000) is a small cost.",
+    "evidence": ["Q1 FY2025 10-Q gross margin ex gas 11.11%", "FY2020-24 gross margin 10.48-11.20%"]
+  },
+
+  "sga_pct_net_sales": {
+    "values": {"2025": 0.0920, "2026": 0.0920, "2027": 0.0920, "2028": 0.0920, "2029": 0.0920},
+    "rationale": "FY2024 was 9.14%. Q1 FY2025 was 14bp higher year on year, flat excluding gasoline deflation. The model holds 9.20%: wage investment and technology spend offset further operating leverage. This deliberately assumes no additional SG&A leverage, even though SG&A fell from 10.0% to 9.1% of net sales over FY2020-24.",
+    "evidence": ["Q1 FY2025 10-Q SG&A +14bp"]
+  },
+
+  "tax_rate": {
+    "value": 0.26,
+    "rationale": "Effective rate excluding discrete items was 25.9-26.6% in FY2020-24 (26.4% in FY2024). Recurring stock-compensation deductions trim a few tenths off in most years, so the model uses 26.0% on both NOPAT and net income.",
+    "evidence": ["historical_metrics.csv effective_tax_rate_ex_discrete"]
+  },
+
+  "d_and_a_pct_beginning_ppe": {
+    "value": 0.084,
+    "rationale": "D&A as a share of beginning net PP&E was 8.2%, 8.1%, 8.4% and 8.4% in FY2021-24. Linking D&A to the asset base keeps capex and depreciation consistent.",
+    "evidence": ["balance_sheet.csv, cash_flow.csv"]
+  },
+
+  "capex": {
+    "fy2025_dollars": 5000,
+    "pct_revenue_after": 0.0185,
+    "rationale": "FY2025: management's stated plan of about $5.0bn (Q1 FY2025 10-Q). FY2026-29: 1.85% of revenue, in line with FY2021-24 (1.71-1.85%) and consistent with about 27 openings a year plus remodels, depots and technology.",
+    "evidence": ["Q1 FY2025 10-Q capex plan $5,000m", "capex/revenue FY2021-24"]
+  },
+
+  "working_capital_pct_revenue": {
+    "receivables": 0.01069, "inventories": 0.07328, "other_current_assets": 0.00681,
+    "accounts_payable": 0.07632, "accrued_salaries": 0.01884, "accrued_member_rewards": 0.00957,
+    "other_current_liabilities": 0.02441,
+    "deferred_membership_fees_pct_fee_income": 0.518,
+    "rationale": "Each operating working-capital line is held at its FY2024 ratio to revenue. Deferred membership fees are held at their ratio to fee income. Together this gives operating working capital of about -4.8% of revenue, so growth releases cash. FY2024 levels are used rather than the FY2020-21 pandemic years (about -6%).",
+    "evidence": ["balance_sheet.csv FY2024"]
+  },
+
+  "interest": {
+    "expense_fixed": 169,
+    "income_yield_on_beginning_cash": {"2025": 0.035, "2026": 0.0325, "2027": 0.030, "2028": 0.030, "2029": 0.030},
+    "rationale": "Interest expense stays at the FY2024 level ($169m) because debt is held flat and the senior notes are fixed-rate. Interest income is a yield on beginning-of-year cash and short-term investments, with no circular reference. FY2024 earned 4.1% on beginning balances. Yields step down from 3.5% to 3.0% after the Fed's Sep-Dec 2024 rate cuts.",
+    "evidence": ["FY2024 interest income and other $624m on $15.2bn beginning cash & investments"]
+  },
+
+  "capital_structure": {
+    "debt": "held flat at the FY2024 level (maturities refinanced)",
+    "leases_and_other_long_term_items": "held flat at the FY2024 level",
+    "dividend_payout_of_net_income": 0.27,
+    "buybacks_per_year": 700,
+    "sbc_pct_revenue": 0.0032,
+    "diluted_shares_m": 444.9,
+    "rationale": "Regular payout was 26-30% of EPS in FY2020-24. No special dividends are assumed, so excess cash builds on the balance sheet. That does not change enterprise value in the DCF. Buybacks of $700m a year match FY2024 and roughly offset stock-compensation dilution, so diluted shares stay flat at the Q1 FY2025 count. None of these financing assumptions affect the unlevered DCF. They are used to balance the three statements.",
+    "evidence": ["historical_metrics.csv regular_payout_ratio", "Q1 FY2025 10-Q diluted shares 444.9m"]
+  },
+
+  "known_simplifications": [
+    "Forecast is on a 52-week basis. FY2028 will be a 53-week year (ending 3 Sep 2028), which adds about 2% to that year's sales. It is excluded so year-over-year growth rates stay comparable.",
+    "PP&E rolls forward as beginning + capex - D&A. Historically, disposals and FX left actual PP&E about $0.1-0.8bn below this roll-forward.",
+    "Other comprehensive income (FX translation) is not forecast."
+  ]
+}

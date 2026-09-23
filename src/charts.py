@@ -37,10 +37,10 @@ FY = [f"FY{y}" for y in YEARS]
 X = list(range(len(FY)))
 
 
-def _title(fig, title: str, subtitle: str) -> None:
+def _title(fig, title: str, subtitle: str, source: str = SOURCE) -> None:
     fig.text(0.02, 0.97, title, fontsize=13, fontweight="bold", color=INK, va="top", parse_math=False)
     fig.text(0.02, 0.905, subtitle, fontsize=9.5, color=INK2, va="top", parse_math=False)
-    fig.text(0.02, 0.015, SOURCE, fontsize=7.5, color=MUTED)
+    fig.text(0.02, 0.015, source, fontsize=7.5, color=MUTED)
 
 
 def _save(fig, name: str) -> None:
@@ -241,10 +241,46 @@ def segments(m: pd.DataFrame) -> None:
     _save(fig, "09_segment_margins.png")
 
 
+S1_LIGHT = "#86b6ef"   # blue ramp step 250: forecast years
+
+
+def forecast_overview() -> None:
+    """History (FY2020-24) vs. base-case forecast (FY2025-29)."""
+    from src.forecast import build
+    fc = build()
+    f, _ = load()
+    hist_years = YEARS
+    fc_cols = [c for c in fc["income_statement"].columns if c.endswith("E")]
+    labels = [f"FY{y}" for y in hist_years] + [c[:-1] for c in fc_cols]
+    rev = list(f.loc["total_revenue", hist_years] / 1000) + list(fc["income_statement"].loc["total_revenue", fc_cols] / 1000)
+    opm = list(f.loc["operating_income", hist_years] / f.loc["total_revenue", hist_years]) + list(fc["income_statement"].loc["operating_margin", fc_cols])
+    fcf = list((f.loc["cfo", hist_years] - f.loc["capex", hist_years]) / 1000) + list(fc["cash_flow"].loc["free_cash_flow", fc_cols] / 1000)
+    xs = list(range(len(labels)))
+    colors = [S1] * len(hist_years) + [S1_LIGHT] * len(fc_cols)
+    fig, (a, b) = plt.subplots(1, 2, figsize=(12, 4.6), gridspec_kw={"wspace": 0.22})
+    fig.subplots_adjust(top=0.78, bottom=0.16, left=0.05, right=0.98)
+    a.bar(xs, rev, width=0.55, color=colors)
+    for x in (0, 4, 9):
+        a.text(x, rev[x] + 5, f"${rev[x]:,.0f}bn", ha="center", fontsize=8.5)
+    a.set_xticks(xs, [l.replace("FY20", "FY") for l in labels]); a.set_ylim(0, 390)
+    a.set_title("Total revenue ($bn)", loc="left", fontsize=10, color=INK2)
+    from matplotlib.patches import Patch
+    a.legend(handles=[Patch(color=S1, label="Actual"), Patch(color=S1_LIGHT, label="Base-case forecast")], loc="upper left")
+    b.bar(xs, fcf, width=0.55, color=colors)
+    for x in (0, 4, 9):
+        b.text(x, fcf[x] + 0.15, f"${fcf[x]:,.1f}bn", ha="center", fontsize=8.5)
+    b.set_xticks(xs, [l.replace("FY20", "FY") for l in labels]); b.set_ylim(0, 11)
+    b.set_title("Free cash flow, CFO − capex ($bn)", loc="left", fontsize=10, color=INK2)
+    _title(fig, f"Base case: revenue +{(rev[-1] / rev[4]) ** (1 / 5) - 1:.1%} a year to FY2029; operating margin {opm[4]:.2%} → {opm[-1]:.2%}",
+           "Margin gain comes from the Sep 2024 membership fee increase; merchandise margins are held flat. Assumptions: config/assumptions.json.",
+           SOURCE.replace("author analysis", "FY2025-29 are the author's base-case forecast, not company guidance"))
+    _save(fig, "10_forecast_overview.png")
+
+
 def main() -> None:
     m = compute_metrics()
     revenue_and_growth(m); growth_decomposition(m); profit_engine(m); margins(m)
-    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m)
+    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview()
     print(f"{len(list(CHARTS.glob('*.png')))} charts written to outputs/charts/")
 
 
