@@ -266,14 +266,19 @@ def extract_segments(facts: pd.DataFrame, fys: list[int]) -> list[dict]:
     return rows
 
 
+def _s(x) -> str:
+    """Blank-safe string: None and NaN both become "". pandas 2 and 3 store missing text differently."""
+    return "" if x is None or (isinstance(x, float) and pd.isna(x)) or x is pd.NA else str(x)
+
+
 def source_checks(facts: pd.DataFrame, long: pd.DataFrame) -> pd.DataFrame:
     """(a) Values that differ between filings (restatements/reclassifications).
        (b) Agreement with the SEC companyfacts API for the same accession and period."""
     out = []
     # (a) restatements
     for _, r in long[long.concept.notna()].iterrows():
-        same = facts[(facts.concept == r.concept) & (facts.dims.fillna("") == (r.dims or "")) & (facts.end == r.period_end)
-                     & (facts.start.fillna("") == (r.period_start or ""))]
+        same = facts[(facts.concept == r.concept) & (facts.dims.fillna("") == _s(r.dims)) & (facts.end == r.period_end)
+                     & (facts.start.fillna("") == _s(r.period_start))]
         for _, s in same.iterrows():
             v = _scale(s.value, r.line_item, s.concept)
             if abs(v - r.value) > 0.5 and not r.line_item.startswith("eps"):
@@ -293,7 +298,7 @@ def source_checks(facts: pd.DataFrame, long: pd.DataFrame) -> pd.DataFrame:
                             "other_accession": orig.iloc[0].accession, "status": "INFO"})
     # (b) companyfacts API
     cf = json.load(open(RAW_SEC / f"{TICKER}_companyfacts.json"))["facts"]["us-gaap"]
-    for _, r in long[(long.concept.notna()) & (long.dims.fillna("") == "")].iterrows():
+    for _, r in long[long.concept.notna() & (long.dims.fillna("") == "")].iterrows():
         if r.concept not in cf:
             out.append({"check": "companyfacts_api", "line_item": r.line_item, "fiscal_year": r.fiscal_year,
                         "selected_value": r.value, "other_value": None, "other_accession": r.accession,
@@ -301,7 +306,7 @@ def source_checks(facts: pd.DataFrame, long: pd.DataFrame) -> pd.DataFrame:
             continue
         units = cf[r.concept].get("units", {})
         match = [f for u in units.values() for f in u
-                 if f.get("accn") == r.accession and f.get("end") == r.period_end and f.get("start") == (r.period_start or None)]
+                 if f.get("accn") == r.accession and f.get("end") == r.period_end and _s(f.get("start")) == _s(r.period_start)]
         if not match:
             out.append({"check": "companyfacts_api", "line_item": r.line_item, "fiscal_year": r.fiscal_year,
                         "selected_value": r.value, "other_value": None, "other_accession": r.accession, "status": "NOT_IN_API"})
