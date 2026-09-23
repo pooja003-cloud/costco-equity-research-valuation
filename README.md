@@ -78,6 +78,21 @@ company-specific; the sector is not generally priced this high. Peer rationale a
 
 ![Comps](outputs/charts/12_comps_multiples.png)
 
+## Sensitivity and scenarios
+
+| | Bear | Base | Bull |
+|---|---:|---:|---:|
+| DCF value per share | $263 | $337 | $400 |
+| vs. $979.88 price | −73% | −66% | −59% |
+
+- **Probability-weighted value (25/50/25):** $334.
+- **Most favourable WACC × growth cell:** 7.4% WACC with 4.0% growth gives $495.
+- **Growth vs. margin:** adding 2pp of comparable sales every year adds only ~4% to value; margin and the discount rate matter more.
+
+Grids, scenario definitions and "what would change the view": [docs/sensitivity.md](docs/sensitivity.md).
+
+![Football field](outputs/charts/14_football_field.png)
+
 ## Data
 
 FY2020–FY2024 historical data (and the FY2019 opening balance sheet) is extracted straight from the
@@ -109,6 +124,7 @@ python -m src.market_fetch         # market data (see note in docs/valuation.md 
 python -m src.wacc                 # cost of capital -> outputs/tables/wacc.csv
 python -m src.dcf                  # DCF -> outputs/tables/dcf_*.csv
 python -m src.comps                # comparable companies -> outputs/tables/comps*.csv
+python -m src.sensitivity          # sensitivity grids and scenarios -> outputs/tables/sens_*.csv
 python -m src.charts               # chart pack -> outputs/charts/
 python -m pytest -q
 jupyter notebook notebooks/01_historical_analysis.ipynb

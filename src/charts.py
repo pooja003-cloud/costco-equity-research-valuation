@@ -344,10 +344,100 @@ def comps_chart() -> None:
     _save(fig, "12_comps_multiples.png")
 
 
+BLUE_RAMP = ["#cde2fb", "#b7d3f6", "#9ec5f4", "#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab"]
+
+
+def _heatmap(ax, df, fmt="${:,.0f}", base=None):
+    from matplotlib.colors import LinearSegmentedColormap
+    import matplotlib.patches as mpatches
+    cmap = LinearSegmentedColormap.from_list("blue", BLUE_RAMP)
+    v = df.values.astype(float)
+    ax.imshow(v, cmap=cmap, aspect="auto", vmin=v.min(), vmax=v.max())
+    ax.set_xticks(range(df.shape[1]), df.columns); ax.set_yticks(range(df.shape[0]), df.index)
+    ax.grid(False)
+    for s_ in ax.spines.values():
+        s_.set_visible(False)
+    for i in range(v.shape[0]):
+        for j in range(v.shape[1]):
+            lum = (v[i, j] - v.min()) / (v.max() - v.min() + 1e-9)
+            ax.text(j, i, fmt.format(v[i, j]), ha="center", va="center", fontsize=9,
+                    color="#ffffff" if lum > 0.55 else INK, fontweight="bold" if base == (i, j) else None)
+    if base:
+        ax.add_patch(mpatches.Rectangle((base[1] - 0.5, base[0] - 0.5), 1, 1, fill=False, edgecolor=INK, linewidth=2))
+
+
+def sensitivity_charts() -> None:
+    import contextlib, io
+    from src.sensitivity import run
+    with contextlib.redirect_stdout(io.StringIO()):
+        out = run()
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.0), gridspec_kw={"wspace": 0.35})
+    fig.subplots_adjust(top=0.76, bottom=0.14, left=0.08, right=0.98)
+    _heatmap(axes[0], out["wacc_g"], base=(2, 2))
+    axes[0].set_title("WACC (rows) x terminal growth (columns)", loc="left", fontsize=10, color=INK2)
+    rm = out["revenue_margin"].copy()
+    rm.index = [i.split(" (")[0].replace("comps", "Comps") for i in rm.index]
+    rm.columns = [c.replace("gross margin ", "GM ") for c in rm.columns]
+    _heatmap(axes[1], rm, base=(2, 2))
+    axes[1].set_title("Comparable-sales growth x gross margin, every year", loc="left", fontsize=10, color=INK2)
+    hi = max(out["wacc_g"].values.max(), rm.values.max())
+    _title(fig, f"No reasonable input combination gets near the ${out['price']:,.0f} share price (highest cell ${hi:,.0f})",
+           "DCF value per share. Outlined = base case ($337). Discount rate and terminal growth matter far more than five-year operating assumptions.",
+           SOURCE.replace("author analysis", "Yahoo Finance, FRED, Damodaran; author analysis"))
+    _save(fig, "13_sensitivity.png")
+
+
+def football_field() -> None:
+    import contextlib, io
+    from src.sensitivity import run
+    from src.comps import build as comps_build
+    from src.market import prices
+    with contextlib.redirect_stdout(io.StringIO()):
+        out = run()
+        _, stats, implied = comps_build()
+    ip = implied.pivot(index="multiple", columns="statistic", values="implied_price")
+    sc = out["scenarios"]["value_per_share"]
+    wg = out["wacc_g"].iloc[1:4, 1:4].values
+    mc = prices("COST", "monthly")["close"]
+    last12 = mc[(mc.index > "2024-01-31") & (mc.index <= "2025-01-31")]
+    rows = [
+        ("52-week range (monthly closes)", last12.min(), last12.max(), None),
+        ("DCF: bear / base / bull scenarios", sc["bear"], sc["bull"], sc["base"]),
+        ("DCF: WACC +/-0.5pp, growth +/-0.5pp", wg.min(), wg.max(), out["base_value"]),
+        ("Comps: EV/EBITDA, peer 25th-75th", ip.loc["ev_ebitda", "peer_25th"], ip.loc["ev_ebitda", "peer_75th"], ip.loc["ev_ebitda", "peer_median"]),
+        ("Comps: P/E, peer 25th-75th", ip.loc["pe", "peer_25th"], ip.loc["pe", "peer_75th"], ip.loc["pe", "peer_median"]),
+        ("Comps: EV/Revenue, peer 25th-75th", ip.loc["ev_revenue", "peer_25th"], ip.loc["ev_revenue", "peer_75th"], ip.loc["ev_revenue", "peer_median"]),
+        ("Comps: Walmart & BJ's median, EV/EBITDA to P/E", ip.loc["ev_ebitda", "tier1_median"], ip.loc["pe", "tier1_median"], None),
+    ]
+    fig, ax = plt.subplots(figsize=(11, 5.2))
+    fig.subplots_adjust(top=0.80, bottom=0.12, left=0.33, right=0.95)
+    n = len(rows)
+    for k, (lab, lo, hi, mid) in enumerate(rows):
+        y = n - 1 - k
+        ax.barh(y, hi - lo, left=lo, height=0.5, color=S1_LIGHT if k else NEUTRAL)
+        ax.text(lo - 8, y, f"${lo:,.0f}", ha="right", va="center", fontsize=8.5)
+        ax.text(hi + 8, y, f"${hi:,.0f}", ha="left", va="center", fontsize=8.5)
+        if mid is not None:
+            _dot(ax, mid, y, S1)
+    price = out["price"]
+    ax.axvline(price, color=S2, linewidth=2)
+    ax.text(price - 12, n - 0.35, f"Share price ${price:,.0f} (31 Jan 2025)", ha="right", va="center", fontsize=9, color=INK)
+    ax.set_yticks(range(n), [r[0] for r in rows][::-1])
+    ax.grid(axis="y", visible=False); ax.grid(axis="x", visible=True)
+    ax.set_xlim(0, 1100); ax.set_ylim(-0.6, n + 0.4)
+    ax.xaxis.set_major_formatter(mt.StrMethodFormatter("${x:,.0f}"))
+    fund = [r for r in rows[1:]]
+    lo_all, hi_all = min(r[1] for r in fund), max(r[2] for r in fund)
+    _title(fig, f"Valuation summary: every fundamental method lands between ${lo_all:,.0f} and ${hi_all:,.0f} per share",
+           f"Dots = base case / peer median. Probability-weighted DCF (25/50/25) = ${out['scenarios'].attrs['probability_weighted']:,.0f}. The 12-month trading range was ${last12.min():,.0f}-${last12.max():,.0f}.",
+           SOURCE.replace("author analysis", "SEC XBRL company facts, Yahoo Finance, FRED, Damodaran; author analysis"))
+    _save(fig, "14_football_field.png")
+
+
 def main() -> None:
     m = compute_metrics()
     revenue_and_growth(m); growth_decomposition(m); profit_engine(m); margins(m)
-    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview(); dcf_bridge(); comps_chart()
+    membership(m); returns_and_capex(m); working_capital(m); cash_uses(); segments(m); forecast_overview(); dcf_bridge(); comps_chart(); sensitivity_charts(); football_field()
     print(f"{len(list(CHARTS.glob('*.png')))} charts written to outputs/charts/")
 
 
