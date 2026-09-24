@@ -49,3 +49,9 @@ paid members 77.4m; gross margin +24bp; SG&A +14bp; management plans 29 openings
   ratios to revenue). The DCF uses unlevered FCF and does **not** add SBC back.
 - Interest: expense fixed at $169m (fixed-rate notes, debt flat); income = 3.5% (FY25), 3.25% (FY26), 3.0% (FY27–29) on
   beginning cash and short-term investments.
+- Membership fees = fee per member × **average** paid members (beginning + end of year ÷ 2). Because member growth fades,
+  average members grow ~0.24pp a year faster than year-end members.
+- Working capital: deferred fees 51.8% of fee income; all other lines together −3.84% of revenue (FY24 ratios). Total ≈ −4.83%.
+- SBC 0.32% of revenue. Diluted shares flat at 444.9m: $700m a year of buybacks offsets SBC dilution.
+- Cash: the ~$35bn FY29 figure is cash and equivalents ($34.8bn). Short-term investments are held flat at $1.24bn, so
+  cash plus investments is $36.1bn.
