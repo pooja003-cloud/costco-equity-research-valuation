@@ -3,6 +3,7 @@
   "tiers": {
     "WMT": "1 - Membership warehouse / scale grocery",
     "BJ": "1 - Membership warehouse / scale grocery",
+    "PSMT": "1 - Membership warehouse / scale grocery",
     "TGT": "2 - Mass merchant / supermarket",
     "KR": "2 - Mass merchant / supermarket",
     "DG": "3 - Value / discount",

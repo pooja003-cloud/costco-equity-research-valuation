@@ -237,7 +237,7 @@ async function main() {
       ["Comps: EV/EBITDA, peer 25th–75th", implied["ev_ebitda|peer_25th"], implied["ev_ebitda|peer_75th"]],
       ["Comps: P/E, peer 25th–75th", implied["pe|peer_25th"], implied["pe|peer_75th"]],
       ["Comps: EV/Revenue, peer 25th–75th", implied["ev_revenue|peer_25th"], implied["ev_revenue|peer_75th"]],
-      ["Comps: Walmart & BJ's, selected", implied["ev_ebitda|tier1_median"], implied["pe|walmart"]],
+      ["Comps: warehouse peers, selected", implied["ev_ebitda|tier1_median"], implied["pe|walmart"]],
       ["7% growth for 10 to 100 more years", dur7[3], dur7[5]],
     ];
     const labels = rows.map(([l, lo, hi]) => `${l}   ${$(lo)}–${$(hi).slice(1)}`);
@@ -279,10 +279,10 @@ async function main() {
       ], { x: 6.95, y: yy + 0.08, w: 2.45, h: 0.38, fontFace: BODY, margin: 0, valign: "middle", isTextBox: true });
       s.addText(body, { x: 6.95, y: yy + 0.47, w: 2.45, h: 0.62, fontFace: BODY, fontSize: 9.5, color: C.ink, margin: 0, valign: "top", isTextBox: true });
     });
-    footer(s, "model outputs (outputs/tables); peers WMT, BJ, TGT, KR, DG, DLTR from SEC filings; FRED; Damodaran.");
+    footer(s, "model outputs (outputs/tables); seven peers from SEC filings; FRED; Damodaran.");
     pageNo(s, 3);
     s.addNotes(`Football field of every valuation method. Base-case DCF ${N.base} (WACC ${N.wacc}, terminal growth ${N.g}). ` +
-      `Peer-median multiples imply $240 (EV/EBITDA) and $280 (P/E); Walmart and BJ's multiples ${N.t1Hi.length ? N.t1Lo + "–" + N.t1Hi.slice(1) : ""}. ` +
+      `Peer-median multiples imply ${$(implied["ev_ebitda|peer_median"])} (EV/EBITDA) and ${$(implied["pe|peer_median"])} (P/E); the membership-warehouse range with Walmart as the ceiling is ${N.t1Lo}–${N.t1Hi.slice(1)}. ` +
       `Even 7% growth for 100 years after FY2029 gives only ${N.dur7_100}. Operating sensitivities move value only ${N.opLo}–${N.opHi.slice(1)}.`);
   }
 
@@ -322,7 +322,7 @@ async function main() {
     circle(s, ic.change, cx + 0.22, cy + 0.2, 0.46, C.white);
     s.addText("What would change my view", { x: cx + 0.8, y: cy + 0.26, w: cw - 1.0, h: 0.34, fontFace: BODY, fontSize: 14, bold: true, color: C.navy, margin: 0, isTextBox: true });
     const triggers = [
-      ["Price. ", `A fall toward ${N.t1Lo}–${N.t1Hi.slice(1)}, the comps range anchored on Walmart and BJ's.`],
+      ["Price. ", `A fall toward ${N.t1Lo}–${N.t1Hi.slice(1)}, the comps range anchored on the warehouse-club peers.`],
       ["Growth runway. ", `Evidence Costco can compound ~8% for decades: at 8% it needs ${N.dur8} years after FY2029 to justify ${N.price}.`],
       ["Discount rate. ", `A lasting fall in rates or risk premia. Near the base, 0.5pp off WACC adds ~$${Math.round(wg[lowerRow]["3.0%"] - base)}/share (more as WACC falls: 6.0% gives ~$596); the price needs ${N.wImp}.`],
       ["Not enough on its own: ", `a strong quarter. Operating upside moves value to ${N.opHi} at most.`],

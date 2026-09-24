@@ -153,7 +153,33 @@ def select_costco_filings(filings: list[dict]) -> list[dict]:
     return sorted(chosen, key=lambda f: f["reportDate"])
 
 
+def fetch_only(tickers: list[str]) -> None:
+    """Add companies to an existing download (e.g. a new peer) without re-downloading everything.
+    Fetches company facts and filing history for each ticker and appends them to the manifest."""
+    dl = Downloader()
+    raw = dl.fetch("https://www.sec.gov/files/company_tickers.json",
+                   RAW_SEC / "company_tickers.json", "SEC ticker-to-CIK map")
+    by_ticker = {v["ticker"]: int(v["cik_str"]) for v in json.loads(raw).values()}
+    for t in tickers:
+        cik = CIK if t == TICKER else int(PEERS[t]["cik"])
+        if by_ticker.get(t) != cik:
+            sys.exit(f"CIK mismatch for {t}: settings.json has {cik}, SEC map has {by_ticker.get(t)}")
+        dl.fetch(f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik10(cik)}.json",
+                 RAW_SEC / f"{t}_companyfacts.json", f"{t} XBRL company facts")
+        all_filings(dl, t, cik)
+    old = list(csv.DictReader(open(MANIFEST))) if MANIFEST.exists() else []
+    new_files = {r["file"] for r in dl.log}
+    rows = [r for r in old if r["file"] not in new_files] + dl.log
+    with open(MANIFEST, "w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(dl.log[0].keys()))
+        w.writeheader()
+        w.writerows(rows)
+    print(f"Done. {len(dl.log)} files downloaded and added to {MANIFEST.name}.")
+
+
 def main() -> None:
+    if "--only" in sys.argv:
+        return fetch_only(sys.argv[sys.argv.index("--only") + 1:])
     print("Downloading SEC data (this takes about a minute)...")
     dl = Downloader()
 

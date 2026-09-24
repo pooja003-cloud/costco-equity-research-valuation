@@ -322,7 +322,7 @@ def comps_chart() -> None:
     with contextlib.redirect_stdout(io.StringIO()):
         df, stats, implied = comps_build()
     names = {"COST": "Costco", "WMT": "Walmart", "BJ": "BJ's", "TGT": "Target", "KR": "Kroger", "DG": "Dollar General",
-             "DLTR": "Dollar Tree"}
+             "DLTR": "Dollar Tree", "PSMT": "PriceSmart"}
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.8), gridspec_kw={"wspace": 0.45})
     fig.subplots_adjust(top=0.78, bottom=0.13, left=0.11, right=0.97)
     for ax, col, title in [(axes[0], "ev_ebitda", "EV / LTM EBITDA"), (axes[1], "pe", "Price / LTM earnings")]:

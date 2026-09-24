@@ -106,10 +106,10 @@ WACC is held at 8.38% in all three scenarios, so they isolate *business* outcome
 |---|---:|---:|---:|
 | DCF scenarios | $263 | $337 | $400 |
 | DCF, WACC ±0.5pp and growth ±0.5pp | $294 | $337 | $398 |
-| Comps EV/EBITDA (peer 25th–75th) | $208 | $240 | $359 |
-| Comps P/E (peer 25th–75th) | $252 | $280 | $408 |
-| Comps EV/Revenue (peer 25th–75th) | $330 | $384 | $423 |
-| Comps selected range: Tier 1 median EV/EBITDA to Walmart P/E | $452 | | $688 |
+| Comps EV/EBITDA (peer 25th–75th) | $216 | $243 | $331 |
+| Comps P/E (peer 25th–75th) | $259 | $313 | $393 |
+| Comps EV/Revenue (peer 25th–75th) | $322 | $362 | $418 |
+| Comps selected range: Tier 1 median EV/EBITDA to Walmart P/E | $359 | | $688 |
 | 52-week trading range (monthly closes) | $723 | | $980 |
 
 ## What would change the view

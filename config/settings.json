@@ -9,7 +9,8 @@
     "TGT":  {"name": "Target Corporation",            "cik": 27419},
     "DG":   {"name": "Dollar General Corporation",    "cik": 29534},
     "DLTR": {"name": "Dollar Tree, Inc.",             "cik": 935703},
-    "KR":   {"name": "The Kroger Co.",                "cik": 56873}
+    "KR":   {"name": "The Kroger Co.",                "cik": 56873},
+    "PSMT": {"name": "PriceSmart, Inc.",              "cik": 1041803}
   },
   "peer_note": "Candidate peer universe only. Final peer set and rationale are decided in Phase 5.",
   "sec": {

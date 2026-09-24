@@ -706,7 +706,7 @@ def build_comps(wb):
     df = pd.read_csv(TABLES / "comps.csv", index_col=0)
     peers = json.load(open(CONFIG_DIR / "peers.json"))
     tickers = list(df.index)
-    cols = {t: L(3 + i) for i, t in enumerate(tickers)}      # C..I
+    cols = {t: L(3 + i) for i, t in enumerate(tickers)}      # C onwards, one column per company
     s.header(5, ["", "Unit"] + tickers)
     R = s.rows
     inputs = [("price", "Share price 31 Jan 2025", "$", USD2), ("shares_m", "Shares outstanding (cover page)", "m", NUM1),
@@ -752,7 +752,8 @@ def build_comps(wb):
     r += 2
     rng = lambda key: f"{cols[tickers[1]]}{R[key]}:{cols[tickers[-1]]}{R[key]}"
     tier1 = lambda key: ",".join(f"{cols[t]}{R[key]}" for t in tickers[1:] if peers["tiers"][t].startswith("1"))
-    s.header(r, ["Peer statistics (excl. Costco)", "", "25th pct", "Median", "75th pct", "Tier 1 median", "Costco", "vs. median"])
+    s.header(r, ["Peer statistics (excl. Costco)", "", "25th pct", "Median", "75th pct", "Tier 1 median", "Costco", "vs. median",
+                 "Walmart"])
     r += 1
     for key, lab in [("ev_rev", "EV / Revenue"), ("ev_ebitda", "EV / EBITDA"), ("pe", "P / E"), ("ps", "P / S"),
                      ("gadj", "Growth-adjusted EV/EBITDA")]:
@@ -763,10 +764,11 @@ def build_comps(wb):
         s.cell(f"F{r}", f"=MEDIAN({tier1(key)})", fmt=MULT)
         s.cell(f"G{r}", f"={cols['COST']}{R[key]}", fmt=MULT)
         s.cell(f"H{r}", f"=G{r}/D{r}-1", fmt=PCT)
+        s.cell(f"I{r}", f"={cols['WMT']}{R[key]}", fmt=MULT)
         R[f"stat_{key}"] = r
         r += 1
     r += 1
-    s.header(r, ["Implied Costco value per share ($)", "Costco metric", "25th pct", "Median", "75th pct", "Tier 1 median"])
+    s.header(r, ["Implied Costco value per share ($)", "Costco metric", "25th pct", "Median", "75th pct", "Tier 1 median", "Walmart"])
     r += 1
     c = cols["COST"]
     netcash = f"({c}{R['cash_and_sti']}-{c}{R['financial_debt']}-{c}{R['noncontrolling_interest']})"
@@ -774,12 +776,12 @@ def build_comps(wb):
                                     ("pe", "P / E", "ltm_net_income", False), ("ps", "P / S", "ltm_revenue", False)]:
         s.cell(f"A{r}", lab)
         s.cell(f"B{r}", f"={c}{R[metric]}", fmt=NUM)
-        for col in "CDEF":
-            m = f"{col}{R['stat_' + key]}"
+        for col, scol in zip("CDEFG", "CDEFI"):       # G = Walmart alone (statistic in column I)
+            m = f"{scol}{R['stat_' + key]}"
             s.cell(f"{col}{r}", f"=({m}*$B{r}{'+' + netcash if is_ev else ''})/{c}{R['shares_m']}", fmt=USD, bold=col == "D")
         R[f"impl_{key}"] = r
         r += 1
-    s.widths(A=38, B=14, **{cols[t]: 13 for t in tickers}, J=16)
+    s.widths(A=38, B=14, **{**{cols[t]: 13 for t in tickers}, L(3 + len(tickers)): 16})
     return s
 
 
@@ -796,7 +798,7 @@ def build_summary(wb, D, SE, C):
         ("Comps: EV/EBITDA (peer 25th-75th)", f"=Comps!C{Cr['impl_ev_ebitda']}", f"=Comps!D{Cr['impl_ev_ebitda']}", f"=Comps!E{Cr['impl_ev_ebitda']}"),
         ("Comps: P/E (peer 25th-75th)", f"=Comps!C{Cr['impl_pe']}", f"=Comps!D{Cr['impl_pe']}", f"=Comps!E{Cr['impl_pe']}"),
         ("Comps: EV/Revenue (peer 25th-75th)", f"=Comps!C{Cr['impl_ev_rev']}", f"=Comps!D{Cr['impl_ev_rev']}", f"=Comps!E{Cr['impl_ev_rev']}"),
-        ("Comps: Tier 1 median (EV/EBITDA to P/E)", f"=Comps!F{Cr['impl_ev_ebitda']}", None, f"=Comps!F{Cr['impl_pe']}"),
+        ("Comps selected range: Tier 1 median EV/EBITDA to Walmart P/E", f"=Comps!F{Cr['impl_ev_ebitda']}", None, f"=Comps!G{Cr['impl_pe']}"),
     ]
     r = 6
     for lab, lo, mid, hi in rows:
@@ -828,6 +830,7 @@ def build_checks(wb, F, W, D, SE, C):
     fc = pd.read_csv(TABLES / "forecast_income_statement.csv", index_col=0)
     comps = pd.read_csv(TABLES / "comps.csv", index_col=0)
     cstats = pd.read_csv(TABLES / "comps_statistics.csv", index_col=0)
+    cimpl = pd.read_csv(TABLES / "comps_implied_value.csv", index_col=[0, 1])
     Fr, Dr, Wr, Cr = F.rows, D.rows, W.rows, C.rows
     items = [
         ("Balance sheet balances, every year (sum of |check|)", f"=SUMPRODUCT(ABS(Forecast!C{Fr['check']}:H{Fr['check']}))", 0.0, 0.01),
@@ -847,6 +850,8 @@ def build_checks(wb, F, W, D, SE, C):
         ("Sensitivity grid centre = base value ($)", f"=Sensitivity!D{SE.rows['wacc_g_centre']}", float(r_["value_per_share"]), 0.05),
         ("Comps: Costco EV/EBITDA", f"=Comps!G{Cr['stat_ev_ebitda']}", float(comps.loc["COST", "ev_ebitda"]), 0.005),
         ("Comps: peer median EV/EBITDA", f"=Comps!D{Cr['stat_ev_ebitda']}", float(cstats.loc["ev_ebitda", "peer_median"]), 0.005),
+        ("Comps: selected range, Walmart P/E implied value ($)", f"=Comps!G{Cr['impl_pe']}",
+         float(cimpl.loc[("pe", "walmart"), "implied_price"]), 0.05),
         ("Scenario selector is on Base (2)", "=Assumptions!C5", 2, 0.0),
     ]
     r = 6

@@ -25,7 +25,7 @@
 | Weights (E / D) | 98.5% / 1.5% | Market values |
 | **WACC** | **8.38%** | |
 
-**Beta cross-check.** Peer betas (Walmart, BJ's, Target, Dollar General, Dollar Tree and Kroger) are unlevered with the Hamada formula, and the median is relevered to Costco's capital structure. The result is 0.62 (Blume-adjusted). That gives a WACC of **7.23%** and a value of **$425/share**.
+**Beta cross-check.** Peer betas (Walmart, BJ's, PriceSmart, Target, Dollar General, Dollar Tree and Kroger) are unlevered with the Hamada formula, and the median is relevered to Costco's capital structure. The result is 0.69 (Blume-adjusted). That gives a WACC of **7.50%** and a value of **$400/share**.
 
 I use Costco's own beta because it is statistically much better determined: peer R² values are 0.03–0.39 (see `outputs/tables/peer_betas.csv`). The peer figure shows how much the answer depends on beta.
 
@@ -123,7 +123,7 @@ The test is deliberately generous. Reinvestment always matches growth: FCF = NOP
 | 8% | $433 | $525 | $1,159 | 76 |
 | 10% | $482 | $650 | $3,425 | 37 |
 
-At the peer-beta WACC of 7.23%, 7% growth would need 53 more years and 10% growth 22 years (`outputs/tables/reverse_dcf_growth_duration.csv`).
+At the peer-beta WACC of 7.50%, 7% growth would need 67 more years and 10% growth 25 years (`outputs/tables/reverse_dcf_growth_duration.csv`).
 For scale, 10% growth for 37 years would make Costco about 34 times its FY2029 size.
 
 **Interpretation.**
@@ -141,7 +141,7 @@ This is the reconciliation the project guideline asks for. It explains why anoth
 | Terminal value timing | Consistent with mid-year flows | Discount TV from end of FY2029 | $337 → $326 |
 | Terminal cash flow | Value-driver (RONIC 25%) | FY2029 UFCF × (1 + g) | $337 → $306 |
 | Beta | Costco regression, Blume-adjusted (0.89) | Raw regression beta (0.84); WACC 8.16% | $337 → $351 |
-| Beta | Costco regression (0.89) | Peer median relevered (0.62) | $337 → $425 |
+| Beta | Costco regression (0.89) | Peer median relevered (0.69) | $337 → $400 |
 | Equity risk premium | Implied, 4.33% | Historical-style 5.0% | $337 → $305 |
 | Cash | All treated as excess | All treated as operating | $337 → $310 |
 | Net debt | Excludes operating leases | Also deduct operating leases | Double-counts ~$2.6bn (≈ −$6) |

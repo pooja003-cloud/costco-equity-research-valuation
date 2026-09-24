@@ -85,10 +85,10 @@ decades of high growth or a much lower required return (4.8% WACC) than CAPM giv
 |---|---:|---:|---:|
 | Costco | 36.5x | 57.4x | |
 | Walmart | 20.2x | 40.3x | |
-| Peer median (WMT, BJ, TGT, KR, DG, DLTR) | 8.7x | 16.4x | $240 |
-| Tier 1 median (WMT, BJ) | 16.7x | 32.1x | $452 |
+| Peer median (WMT, BJ, PSMT, TGT, KR, DG, DLTR) | 8.8x | 18.4x | $243 |
+| Tier 1 median (WMT, BJ, PSMT) | 13.2x | 23.9x | $359 |
 
-Anchoring on Walmart and BJ's, with Walmart as the ceiling, comps support about $450–$690 per share; the $980 price is 42–117% above that. Costco's premium is
+Anchoring on the three membership-warehouse peers (Walmart, BJ's, PriceSmart), with Walmart as the ceiling, comps support about $360–$690 per share; the $980 price is 42–173% above that. Costco's premium is
 company-specific; the sector is not generally priced this high. Peer rationale and method: [docs/comps.md](docs/comps.md).
 
 ![Comps](outputs/charts/12_comps_multiples.png)
@@ -111,7 +111,7 @@ Grids, scenario definitions and "what would change the view": [docs/sensitivity.
 
 ## Excel model
 
-[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 887 live formulas and no formula errors. It has 11 sheets:
+[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 908 live formulas and no formula errors. It has 11 sheets:
 - **Cover:** headline outputs and a colour legend.
 - **Historicals:** every hardcoded number has a comment with its XBRL tag and filing link.
 - **Assumptions:** includes a Bear / Base / Bull switch.
