@@ -1,5 +1,4 @@
-"""The Excel model must build, contain every sheet, and compute its outputs with formulas (not pasted values).
-Numerical agreement with Python is verified inside the workbook (Checks sheet) after recalculation."""
+"""The workbook builds, has every sheet and uses formulas. Agreement with Python is checked on the Checks sheet."""
 from openpyxl import load_workbook
 
 from src.config import OUTPUTS

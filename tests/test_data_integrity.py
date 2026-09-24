@@ -1,8 +1,4 @@
-"""Data-integrity tests: the extracted statements must satisfy the accounting identities as reported.
-
-Run with:  python -m pytest -q
-Tolerance is $1m because the filings report in whole millions.
-"""
+"""Accounting identities in the extracted statements (tolerance $1m, since filings round to millions)."""
 import pandas as pd
 import pytest
 

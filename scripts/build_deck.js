@@ -1,12 +1,6 @@
-// Build outputs/COST_Equity_Research_Deck.pptx: title, investment thesis, valuation summary,
-// and "Risks and What Would Change My View".
-//
-// Every number on the slides is read from the model outputs in outputs/tables/ (and the monthly price file),
-// so the deck cannot drift from the Python model. Re-run after `python -m src.sensitivity` etc.
-//
-// Requires Node 18+ and: npm install pptxgenjs react react-dom react-icons sharp
-// Run from the repo root:  node scripts/build_deck.js
-// PDF copy (LibreOffice):  soffice --headless --convert-to pdf --outdir outputs outputs/COST_Equity_Research_Deck.pptx
+// Builds outputs/COST_Equity_Research_Deck.pptx. Numbers come from outputs/tables/, so rerun after the Python steps.
+// Needs: npm install pptxgenjs react react-dom react-icons sharp
+// Run from the repo root: node scripts/build_deck.js
 
 const fs = require("fs");
 const path = require("path");
@@ -20,7 +14,7 @@ const ROOT = path.resolve(__dirname, "..");
 const T = (f) => path.join(ROOT, "outputs", "tables", f);
 const OUT = path.join(ROOT, "outputs", "COST_Equity_Research_Deck.pptx");
 
-// ---------- data -------------------------------------------------------------------------------------------------
+// data
 function readCsv(file) {
   const [head, ...rows] = fs.readFileSync(file, "utf8").trim().split(/\r?\n/).map(splitCsv);
   return { head, rows };
@@ -106,7 +100,7 @@ const N = {
   t1Lo: $(implied["ev_ebitda|tier1_median"]), t1Hi: $(implied["pe|walmart"]),
 };
 
-// ---------- design -----------------------------------------------------------------------------------------------
+// design
 const C = {
   navy: "14213D", navy2: "22335A", ink: "1A1A1A", muted: "5C5C5C", tint: "EEF2F8", line: "D5DAE3",
   blue: "2A78D6", orange: "E8702A", white: "FFFFFF", ice: "CADCFC",
@@ -148,7 +142,7 @@ async function main() {
     s.addImage({ data: img, x: xx + d * 0.25, y: yy + d * 0.25, w: d * 0.5, h: d * 0.5 });
   };
 
-  // ---------------- 1. Title ------------------------------------------------------------------------------------
+  // Title
   {
     const s = pres.addSlide();
     s.background = { color: C.navy };
@@ -175,7 +169,7 @@ async function main() {
       `The share price was ${N.price}; the base-case DCF gives ${N.base}. The rest of the deck explains the gap. ${DISCLAIMER}`);
   }
 
-  // ---------------- 2. Investment thesis ------------------------------------------------------------------------
+  // Investment thesis
   {
     const s = pres.addSlide();
     s.background = { color: C.white };
@@ -224,7 +218,7 @@ async function main() {
       `The problem is price. The base-case DCF is ${N.base} against ${N.price}; the reverse DCF says the market is pricing ${N.gImp} perpetual growth or a ${N.wImp} cost of capital.`);
   }
 
-  // ---------------- 3. Valuation --------------------------------------------------------------------------------
+  // Valuation
   {
     const s = pres.addSlide();
     s.background = { color: C.white };
@@ -286,7 +280,7 @@ async function main() {
       `Even 7% growth for 100 years after FY2029 gives only ${N.dur7_100}. Operating sensitivities move value only ${N.opLo}–${N.opHi.slice(1)}.`);
   }
 
-  // ---------------- 4. Risks and what would change my view ------------------------------------------------------
+  // Risks and what would change my view
   {
     const s = pres.addSlide();
     s.background = { color: C.white };

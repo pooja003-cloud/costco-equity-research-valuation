@@ -1,11 +1,4 @@
-"""Chart pack for the historical analysis (static PNGs for GitHub and the memo).
-
-Style: one quiet system across every chart.
-- Categorical colors come from a validated palette, in fixed order: blue, orange, aqua.
-  Colorblind separation was checked with a validator.
-- Marks are thin, gridlines are hairlines, and there is only ever one y-axis per panel.
-- Text is ink colored, never series colored. Every chart with two or more series has a legend and selective direct labels.
-"""
+"""Charts for the historical analysis, memo and README (PNG files in outputs/charts/)."""
 from __future__ import annotations
 
 import matplotlib

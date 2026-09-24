@@ -1,13 +1,8 @@
-"""Rebuild the whole project in order: data, forecast, valuation, Excel model, charts, memo and slides.
+"""Runs every step in order. See docs/reproducing.md.
 
-Usage (from the repository root, with the virtual environment active):
-    python -m src.run_all              # full rebuild, including the SEC download
-    python -m src.run_all --offline    # skip all downloads and use the files already in data/raw/
-    python -m src.run_all --refresh-market   # also re-download market data (Yahoo Finance often blocks this)
-
-The SEC download needs a contact e-mail in the SEC_USER_AGENT environment variable.
-Market data (prices, rates, equity risk premium) is committed in data/raw/market/, so it is not re-downloaded by default.
-Each step is described in docs/reproducing.md. The run stops at the first step that fails.
+    python -m src.run_all                    # everything, including the SEC download
+    python -m src.run_all --offline          # use the files already in data/raw/
+    python -m src.run_all --refresh-market   # also re-download market data
 """
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Checks on the Phase 2 historical metrics: identities that must hold, plus sanity ranges."""
+"""Historical metrics: identities and sanity ranges."""
 import pandas as pd
 import pytest
 

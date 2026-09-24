@@ -1,8 +1,6 @@
-"""Balance-sheet and share data for Costco and peers from SEC companyfacts, as known on the valuation date.
+"""Balance-sheet items and share counts from companyfacts, using only filings made by 31 Jan 2025.
 
-Only facts from 10-K/10-Q filings *filed on or before* 31 Jan 2025 are used, so there is no look-ahead.
-All values are taken at each company's latest balance-sheet date. Companies tag debt differently, so each
-item has a list of XBRL concepts in order of preference. The concept actually used is recorded next to each value.
+Companies tag debt differently, so each item tries a list of concepts in order and records which one it used.
 """
 from __future__ import annotations
 

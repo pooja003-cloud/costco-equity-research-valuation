@@ -1,13 +1,7 @@
-"""Operating metrics: warehouses, members, renewal rates, comparable sales, floor space, membership fees.
+"""Operating metrics (members, renewal rates, comparable sales, floor space) from data/manual/.
 
-Most of these are narrative disclosures in the 10-K (Item 1, Item 2, MD&A), not tagged XBRL facts.
-Each one is hand-collected into data/manual/operating_metrics.csv together with the **verbatim sentence**
-it comes from. This script re-opens the cited filing and checks two things for every row:
-  1. the quote appears word-for-word in that filing, and
-  2. the number as written appears inside the quote.
-If either check fails, the build stops. So every manual number stays traceable to the filing.
-
-Warehouse counts are tagged in XBRL (us-gaap:NumberOfStores), so they are read from the filing directly.
+These are in the 10-K text rather than XBRL, so each row stores the sentence it came from. The build stops if a
+quote isn't found word-for-word in the filing or the number isn't in the quote.
 """
 from __future__ import annotations
 

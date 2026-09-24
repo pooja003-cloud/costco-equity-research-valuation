@@ -1,4 +1,4 @@
-"""Integrity tests for the three-statement forecast: the statements must link, and the drivers must behave sensibly."""
+"""The forecast statements link and the drivers behave sensibly."""
 import copy
 
 import pytest

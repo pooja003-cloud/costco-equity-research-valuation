@@ -1,20 +1,8 @@
-"""Build Costco's FY2019-FY2024 financial dataset from the 10-K inline XBRL, with a source for every number.
+"""Costco FY2019-FY2024 financial statements from the 10-K inline XBRL, with a source link per number.
 
-Source rule
------------
-Each statement for each fiscal year comes from the **most recent 10-K that presents it**. A 10-K shows
-three years of income statement and cash flow, and two years of balance sheet. Taking the latest one means
-every year uses the company's current line-item presentation. Example: from FY2022 Costco stopped showing
-preopening expense as its own line and folded it into SG&A, and restated FY2020-2021 to match.
-All line items for a given statement and year come from the *same* filing, so reclassifications cannot be
-double-counted. The originally reported values are kept, and any difference is listed in
-``data/processed/source_checks.csv``.
-
-Outputs (all in data/processed/)
---------------------------------
-financials_long.csv   one row per number: value, XBRL concept, dimensions, period, accession, link to the tagged fact
-income_statement.csv, balance_sheet.csv, cash_flow.csv, segments.csv   wide tables in $ millions
-source_checks.csv     restatements across filings and a cross-check against the SEC companyfacts API
+Each statement-year is taken from the latest 10-K that shows it, so every year uses the current presentation
+(e.g. preopening expense was folded into SG&A from FY2022). Differences from the original filings are
+written to data/processed/source_checks.csv.
 """
 from __future__ import annotations
 
@@ -26,10 +14,8 @@ import pandas as pd
 from src.config import PROCESSED, RAW, RAW_SEC, TICKER
 from src.ixbrl import read_facts
 
-# ----------------------------------------------------------------------------------------------
 # Line-item map: key -> (label, [XBRL concepts in order of preference], required dims, optional)
 # A missing optional item means the filing does not show it as a separate line, so it is set to 0.
-# ----------------------------------------------------------------------------------------------
 P = "srt:ProductOrServiceAxis="
 INCOME_STATEMENT = {
     "net_sales":            ("Net sales", ["RevenueFromContractWithCustomerExcludingAssessedTax"], P + "us-gaap:ProductMember", False),
@@ -98,9 +84,7 @@ CASH_FLOW = {
     "income_taxes_paid":    ("Income taxes paid (supplemental)", ["IncomeTaxesPaid"], "", False),
     "interest_paid":        ("Interest paid (supplemental)", ["InterestPaidNet", "InterestPaid"], "", False),
 }
-# Lease-note disclosures, needed for the net-debt definition in the DCF. These are notes, not statement
-# lines, so each value comes from the latest filing that discloses it. Newer 10-Ks show only the total
-# of operating + finance lease liabilities, so finance leases are derived as total - operating when needed.
+# Lease note (needed for net debt). Newer 10-Ks only give total lease liabilities, so finance = total - operating.
 LEASE_NOTE = {
     "operating_lease_liab_total": ("Operating lease liabilities (current + long-term)", ["OperatingLeaseLiability"]),
     "total_lease_liab":           ("Total lease liabilities (operating + finance)", ["OperatingLeaseandFinanceLeaseLiabilities"]),
@@ -267,7 +251,7 @@ def extract_segments(facts: pd.DataFrame, fys: list[int]) -> list[dict]:
 
 
 def _s(x) -> str:
-    """Blank-safe string: None and NaN both become "". pandas 2 and 3 store missing text differently."""
+    """None/NaN -> "" (pandas 2 and 3 store missing text differently)."""
     return "" if x is None or (isinstance(x, float) and pd.isna(x)) or x is pd.NA else str(x)
 
 

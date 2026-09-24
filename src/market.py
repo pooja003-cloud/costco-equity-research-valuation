@@ -1,4 +1,4 @@
-"""Loaders for the valuation-date market data in data/raw/market/ (see manifest.csv there for provenance)."""
+"""Loaders for the market data in data/raw/market/."""
 from __future__ import annotations
 
 import pandas as pd

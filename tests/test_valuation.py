@@ -1,4 +1,4 @@
-"""Tests for the WACC and DCF: formulas, identities and sensible behaviour."""
+"""WACC and DCF formulas, identities and behaviour."""
 import pytest
 
 from src.dcf import main as dcf_main, value, value_exit_multiple

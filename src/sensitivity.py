@@ -1,13 +1,4 @@
-"""Sensitivity analysis and bear/base/bull scenarios for the DCF.
-
-Grids (value per share, $):
-  1. WACC x terminal growth
-  2. Revenue growth x operating margin: comparable-sales growth shifted every year, and gross margin shifted in bps
-     every year (which moves operating margin one-for-one), re-running the full three-statement forecast each time
-  3. Terminal RONIC x terminal growth (how much growth must be reinvested, i.e. the terminal-year cash flow)
-  4. Terminal-year cash flow +/- x% at each WACC
-Scenarios: config/scenarios.json.
-"""
+"""Sensitivity grids and bear/base/bull scenarios (scenario settings in config/scenarios.json)."""
 from __future__ import annotations
 
 import contextlib

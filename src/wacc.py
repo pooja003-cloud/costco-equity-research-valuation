@@ -1,9 +1,6 @@
-"""Weighted average cost of capital for Costco as of 31 Jan 2025.
+"""WACC as of 31 Jan 2025 (CAPM cost of equity, spread-based cost of debt, market-value weights).
 
-    WACC = E/(D+E) x Re + D/(D+E) x Rd x (1 - T)
-    Re   = Rf + beta x ERP                                  (CAPM)
-
-All market inputs come from data/raw/market/ (checksummed in manifest.csv); judgement calls from config/valuation.json.
+Judgement calls are in config/valuation.json.
 """
 from __future__ import annotations
 

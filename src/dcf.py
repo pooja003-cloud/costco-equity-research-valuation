@@ -1,14 +1,8 @@
-"""Discounted cash flow valuation of Costco as of 31 Jan 2025.
+"""DCF valuation of Costco as of 31 Jan 2025.
 
-    UFCF  = EBIT x (1 - T) + D&A - Capex - increase in operating working capital
-    TV    = FCF(n+1) / (WACC - g),  with FCF(n+1) = NOPAT(n+1) x (1 - g / RONIC)     (value-driver form)
-    EV    = PV(stub FY2025 UFCF) + PV(FY2026-29 UFCF) + PV(TV)
-    Equity = EV + cash & short-term investments - debt - finance leases - noncontrolling interest
-
-Timing: net debt is from the 24 Nov 2024 balance sheet, so the first cash-flow period is the remaining 40/52 of
-FY2025 (24 Nov 2024 - 31 Aug 2025). Every flow is discounted from the 31 Jan 2025 valuation date to the midpoint
-of its period (mid-year convention). Stock-based compensation is treated as a real cost: it is already in EBIT
-and is not added back.
+Net debt comes from the 24 Nov 2024 balance sheet, so FY2025 only counts the cash flow after that date.
+Mid-year discounting. Terminal FCF uses the value-driver formula NOPAT x (1 - g / RONIC).
+SBC is treated as a real expense and not added back.
 """
 from __future__ import annotations
 

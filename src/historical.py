@@ -1,14 +1,7 @@
-"""Historical analysis metrics for Costco, FY2020-FY2024.
+"""Historical metrics for FY2020-FY2024, calculated from data/processed/.
 
-Every metric is computed from the source-tracked datasets built in Phase 1 (data/processed/). Nothing
-here is typed in by hand. Definitions are in the docstrings and in docs/historical_analysis.md.
-
-Conventions
------------
-* $ millions unless stated otherwise. Fiscal years end on the Sunday nearest 31 August.
-* Averages of balance-sheet items use (opening + closing) / 2. FY2019 is the opening balance for FY2020.
-* FY2023 had 53 weeks. "52-week adjusted" figures scale FY2023 flow items by 52/53. Costco does not
-  disclose the dollar value of the extra week, so this is a stated approximation.
+$ millions. Averages use (opening + closing) / 2. FY2023 had 53 weeks, so the "_52wk" versions scale
+FY2023 flows by 52/53 (Costco doesn't disclose the extra week, so this is an approximation).
 """
 from __future__ import annotations
 
@@ -44,7 +37,7 @@ def compute_metrics() -> pd.DataFrame:
     cogs, sga, ebit = f.loc["merchandise_costs"], f.loc["sga"], f.loc["operating_income"]
     wh, sqft = o.loc["warehouses_end_of_year"], o.loc["operating_floor_space"]
 
-    # ---------------- Growth ----------------
+    # growth
     adj = lambda s, fy: s[fy] * 52 / WEEKS[fy]                     # 52-week equivalent
     put("revenue_growth", lambda fy: rev[fy] / rev[fy - 1] - 1, YEARS[1:])
     put("net_sales_growth", lambda fy: ns[fy] / ns[fy - 1] - 1, YEARS[1:])
@@ -62,13 +55,13 @@ def compute_metrics() -> pd.DataFrame:
     put("net_sales_per_avg_warehouse", lambda fy: adj(ns, fy) / _avg(wh, fy), YEARS[1:])   # $m, 52-wk
     put("net_sales_per_avg_sqft", lambda fy: adj(ns, fy) * 1e6 / (_avg(sqft, fy) * 1e6), YEARS[1:])  # $ per sq ft
 
-    # ---------------- Margins ----------------
+    # margins
     put("gross_margin_on_net_sales", lambda fy: (ns[fy] - cogs[fy]) / ns[fy])
     put("sga_pct_net_sales", lambda fy: sga[fy] / ns[fy])
     put("operating_margin", lambda fy: ebit[fy] / rev[fy])
     put("membership_fees_pct_revenue", lambda fy: fees[fy] / rev[fy])
     put("membership_fees_pct_operating_income", lambda fy: fees[fy] / ebit[fy])
-    # Merchandising profit: operating income earned *before* counting fee income. Costco prices goods near cost.
+    # Merchandising profit: operating income earned before counting fee income. Costco prices goods near cost.
     put("merchandise_operating_income", lambda fy: ebit[fy] - fees[fy])
     put("merchandise_operating_margin", lambda fy: (ebit[fy] - fees[fy]) / ns[fy])
     put("net_margin", lambda fy: f.loc["net_income", fy] / rev[fy])
@@ -91,7 +84,7 @@ def compute_metrics() -> pd.DataFrame:
         put(f"segment_margin_{key}", lambda fy, r=r, oi=oi: oi[fy] / r[fy])
         put(f"segment_revenue_share_{key}", lambda fy, r=r: r[fy] / rev[fy])
 
-    # ---------------- Membership economics ----------------
+    # membership economics
     pm, ex = o.loc["paid_members"], o.loc["executive_members"]
     put("paid_members_m", lambda fy: pm[fy])
     put("paid_member_growth", lambda fy: pm[fy] / pm[fy - 1] - 1, YEARS[1:])
@@ -104,7 +97,7 @@ def compute_metrics() -> pd.DataFrame:
     put("renewal_rate_worldwide", lambda fy: o.loc["renewal_rate_worldwide", fy] / 100)
     put("net_sales_per_avg_paid_member", lambda fy: adj(ns, fy) * 1e6 / (_avg(pm, fy) * 1e6), YEARS[1:])
 
-    # ---------------- Working capital ----------------
+    # working capital
     op_ca = lambda fy: f.loc["receivables", fy] + f.loc["inventories", fy] + f.loc["other_current_assets", fy]
     op_cl = lambda fy: (f.loc["accounts_payable", fy] + f.loc["accrued_salaries", fy] + f.loc["accrued_member_rewards", fy]
                         + f.loc["deferred_membership_fees", fy] + f.loc["other_current_liabilities", fy])
@@ -112,13 +105,13 @@ def compute_metrics() -> pd.DataFrame:
     put("operating_nwc", lambda fy: nwc[fy])
     put("operating_nwc_pct_revenue", lambda fy: nwc[fy] / rev[fy])
     put("change_in_operating_nwc", lambda fy: nwc[fy] - nwc[fy - 1])
-    days = lambda fy: 7 * WEEKS[fy] - (0 if WEEKS[fy] == 52 else 0)   # 364 or 371 days
+    days = lambda fy: 7 * WEEKS[fy]   # 364 or 371
     put("inventory_days", lambda fy: _avg(f.loc["inventories"], fy) / cogs[fy] * days(fy))
     put("payable_days", lambda fy: _avg(f.loc["accounts_payable"], fy) / cogs[fy] * days(fy))
     put("payables_to_inventory", lambda fy: f.loc["accounts_payable", fy] / f.loc["inventories", fy])
     put("deferred_fees_pct_fee_income", lambda fy: f.loc["deferred_membership_fees", fy] / fees[fy])
 
-    # ---------------- Capital intensity, cash flow ----------------
+    # capital intensity, cash flow
     capex, da, cfo = f.loc["capex"], f.loc["d_and_a"], f.loc["cfo"]
     put("capex", lambda fy: capex[fy])
     put("capex_pct_revenue", lambda fy: capex[fy] / rev[fy])
@@ -130,7 +123,7 @@ def compute_metrics() -> pd.DataFrame:
     put("fcf_conversion", lambda fy: (cfo[fy] - capex[fy]) / f.loc["net_income", fy])
     put("cfo_to_net_income", lambda fy: cfo[fy] / f.loc["net_income", fy])
 
-    # ---------------- Returns on capital ----------------
+    # returns on capital
     # Invested capital (financing view) = debt + lease liabilities + total equity - cash - short-term investments.
     # FY2019 predates ASC 842 (no operating leases on balance sheet), so FY2020 ROIC uses year-end IC only.
     lease = {fy: f.loc["total_lease_liab", fy] for fy in YEARS}
@@ -146,14 +139,14 @@ def compute_metrics() -> pd.DataFrame:
     put("net_cash_after_leases", lambda fy: m["net_cash"][fy] - lease[fy])
     put("revenue_to_avg_ppe", lambda fy: rev[fy] / _avg(f.loc["ppe_net"], fy))
 
-    # ---------------- Capital allocation ----------------
+    # capital allocation
     special = o.loc["special_dividend_paid"] if "special_dividend_paid" in o.index else pd.Series(dtype=float)
     sp = lambda fy: special.get(fy, 0.0) if pd.notna(special.get(fy, float("nan"))) else 0.0
     put("dividends_paid_total", lambda fy: f.loc["dividends_paid", fy])
     put("special_dividends", lambda fy: sp(fy))
     put("regular_dividends", lambda fy: f.loc["dividends_paid", fy] - sp(fy))
     # Cash paid shifts between years with the timing of the last quarterly payment, so the payout ratio uses
-    # dividends *declared* per share (excluding specials) divided by diluted EPS.
+    # dividends declared per share (excluding specials) divided by diluted EPS.
     dps = o.loc["dividends_declared_per_share"]
     sdps = o.loc["special_dividend_per_share"]
     put("regular_dps_declared", lambda fy: dps[fy] - (sdps[fy] if pd.notna(sdps.get(fy)) else 0.0))

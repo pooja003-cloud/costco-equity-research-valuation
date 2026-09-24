@@ -36,7 +36,7 @@ def test_negative_earnings_are_not_meaningful(comps):
 
 
 def test_costco_ltm_matches_extracted_quarter(comps):
-    """Costco LTM revenue must equal FY2024 + Q1 FY2025 - Q1 FY2024 from the Phase 1/3 datasets."""
+    """Costco LTM revenue = FY2024 + Q1 FY2025 - Q1 FY2024."""
     import pandas as pd
     from src.config import PROCESSED
     q = pd.read_csv(PROCESSED / "quarter_q1_fy2025.csv")

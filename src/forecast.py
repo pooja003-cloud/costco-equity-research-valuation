@@ -1,19 +1,6 @@
-"""Driver-based, integrated three-statement forecast for Costco, FY2025-FY2029.
+"""Five-year driver-based forecast (FY2025-FY2029) with linked income statement, balance sheet and cash flow.
 
-Every input comes from config/assumptions.json, where each assumption has its rationale. The FY2024 actuals
-(Phase 1 data) are the starting point.
-
-Build order for each year
--------------------------
-1. Operating drivers: warehouses -> net sales (comps x new-warehouse contribution); paid members x fee per member -> fees
-2. Income statement: gross margin, SG&A, operating income (EBIT), interest, tax, net income
-3. Balance sheet, operating lines: working capital scales with revenue/fees; PP&E = beginning + capex - D&A
-4. Cash flow statement: CFO (indirect method), CFI (capex), CFF (dividends, buybacks)
-5. Cash = beginning cash + net cash flow. Cash is the only plug.
-6. Check: total assets = total liabilities + equity. The model raises an error if it does not.
-
-The balance sheet balances only if every movement passes through the cash flow statement. That is what makes
-the three statements "linked"; tests/test_forecast.py checks it for every year.
+Inputs are in config/assumptions.json. Cash is the only plug; build() raises if the balance sheet doesn't balance.
 """
 from __future__ import annotations
 
@@ -44,7 +31,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
     years = a["forecast_years"]
     cols = [base] + years
 
-    # ---- FY2024 opening values (actuals) ----
+    # FY2024 actuals
     act = lambda k: float(fin.loc[k, base])
     drv = {c: {} for c in cols}
     inc = {c: {} for c in cols}
@@ -69,7 +56,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
     cf[base]["net_income"] = act("net_income")
     cf[base]["free_cash_flow"] = act("cfo") - act("capex")
 
-    # ---- forecast ----
+    # forecast
     fee_inc = a["membership_fee_increase"]
     fee_uplift_full = fee_inc["full_uplift_on_affected_fees"] * fee_inc["share_of_fee_income_affected"]
     wc = a["working_capital_pct_revenue"]
@@ -78,7 +65,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
         p = fy - 1
         d, i, b, c = drv[fy], inc[fy], bs[fy], cf[fy]
 
-        # 1. drivers
+        # drivers
         d["net_new_warehouses"] = _yr(a["warehouses"]["net_new"], fy)
         d["warehouses"] = drv[p]["warehouses"] + d["net_new_warehouses"]
         d["unit_growth"] = d["net_new_warehouses"] / drv[p]["warehouses"]
@@ -90,7 +77,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
         d["fee_increase_effect"] = fee_uplift_full * fee_inc["recognition_by_year"].get(str(fy), 0.0)
         d["fee_per_avg_member"] = drv[p]["fee_per_avg_member"] * (1 + d["fee_increase_effect"]) * (1 + a["fee_per_member_other_growth"]["value"])
 
-        # 2. income statement
+        # income statement
         i["net_sales"] = inc[p]["net_sales"] * (1 + d["net_sales_growth"])
         i["membership_fees"] = d["fee_per_avg_member"] * (d["paid_members"] + drv[p]["paid_members"]) / 2
         i["total_revenue"] = i["net_sales"] + i["membership_fees"]
@@ -107,7 +94,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
         i["diluted_shares"] = cs["diluted_shares_m"]
         i["eps_diluted"] = i["net_income"] / cs["diluted_shares_m"]
 
-        # 3. balance sheet, operating items
+        # balance sheet, operating items
         rev = i["total_revenue"]
         for k in WC_ASSETS + WC_LIABS:
             b[k] = wc[k] * rev
@@ -118,7 +105,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
                   "lt_operating_lease_liab", "other_lt_liabilities"]:
             b[k] = bs[p][k]
 
-        # 4. cash flow statement
+        # cash flow statement
         nwc = lambda y: (sum(bs[y][k] for k in WC_ASSETS) - sum(bs[y][k] for k in WC_LIABS) - bs[y]["deferred_membership_fees"])
         c["net_income"] = i["net_income"]
         c["d_and_a"] = i["d_and_a"]
@@ -132,7 +119,7 @@ def build(a: dict | None = None) -> dict[str, pd.DataFrame]:
         c["net_change_cash"] = c["cfo"] + c["cfi"] + c["cff"]
         c["free_cash_flow"] = c["cfo"] - c["capex"]
 
-        # 5. cash plug and equity roll-forward
+        # cash plug and equity roll-forward
         b["cash"] = bs[p]["cash"] + c["net_change_cash"]
         b["total_equity"] = bs[p]["total_equity"] + i["net_income"] + c["sbc"] - c["dividends_paid"] - c["buybacks"]
 

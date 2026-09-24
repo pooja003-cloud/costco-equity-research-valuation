@@ -1,9 +1,6 @@
-"""Render docs/investment_memo.md to outputs/COST_Investment_Memo.pdf (two pages, US Letter).
+"""Renders docs/investment_memo.md to outputs/COST_Investment_Memo.pdf.
 
-The markdown file is the single source of truth. This script is a small markdown-to-ReportLab renderer that
-supports headings, paragraphs, bullet lists (one level of nesting), pipe tables, block quotes and **bold**.
-
-Run:  python -m src.build_memo      (requires reportlab; fonts: Liberation Sans or DejaVu Sans if available, else Helvetica)
+Handles the bits of markdown the memo uses: headings, paragraphs, bullets (one level), tables, quotes, bold, images.
 """
 from __future__ import annotations
 

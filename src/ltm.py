@@ -1,9 +1,6 @@
-"""Last-twelve-months (LTM) income-statement figures from SEC companyfacts, as known on the valuation date.
+"""Last-twelve-months figures from companyfacts: last fiscal year + current YTD - prior YTD.
 
-    LTM = last fiscal year + current year-to-date - prior-year year-to-date
-
-Only 10-K/10-Q facts filed on or before 31 Jan 2025 are used. Several peers had 53-week fiscal years (e.g. the year
-ended 3 Feb 2024), so every LTM flow is scaled to a 364-day (52-week) basis. That keeps the multiples comparable.
+Only filings made by 31 Jan 2025 are used. Flows are scaled to 52 weeks because some peers had 53-week years.
 """
 from __future__ import annotations
 

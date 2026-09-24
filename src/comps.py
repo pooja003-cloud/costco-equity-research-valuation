@@ -1,11 +1,7 @@
-"""Comparable-company analysis as of 31 Jan 2025.
+"""Comparable companies as of 31 Jan 2025.
 
-Every company is measured the same way:
-* Price: close on 31 Jan 2025 (Yahoo Finance). Shares: cover-page count in the latest filing before that date.
-* Enterprise value = market cap + financial debt (including finance leases) + noncontrolling interest - cash - short-term
-  investments. Operating leases are excluded, consistent with EBITDA that is already after operating lease cost (ASC 842).
-* Earnings: LTM to each company's latest quarter before the valuation date, on a 52-week basis (src/ltm.py). GAAP, unadjusted.
-* Multiples: EV/Revenue, EV/EBITDA, P/E, P/S, and growth-adjusted EV/EBITDA (EV/EBITDA divided by the 3-year revenue CAGR in %).
+EV = market cap + debt (incl. finance leases) + minority interest - cash - short-term investments.
+Operating leases are left out because EBITDA is already after rent (ASC 842). Earnings are GAAP LTM (see ltm.py).
 """
 from __future__ import annotations
 

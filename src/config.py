@@ -1,4 +1,4 @@
-"""Project paths and settings shared by every pipeline step."""
+"""Paths and settings used by the rest of the code."""
 from __future__ import annotations
 
 import json

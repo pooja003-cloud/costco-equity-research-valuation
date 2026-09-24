@@ -1,25 +1,7 @@
-"""Download the market data for the valuation date (31 Jan 2025): prices, Treasury yields, credit spreads, ERP.
+"""Downloads the market data: Yahoo Finance prices, FRED rates and spreads, Damodaran's implied ERP.
 
-Sources (all free and public)
------------------------------
-* Share prices   Yahoo Finance chart API (fallback: Stooq). Monthly adjusted closes Dec 2019 - Jan 2025 feed the beta
-                 regressions; the daily close on 31 Jan 2025 is the valuation-date price.
-* Rates          FRED (Federal Reserve Bank of St. Louis):
-                   DGS10       10-year Treasury constant-maturity yield
-                   DGS30       30-year Treasury yield
-                   BAMLC0A2CAA ICE BofA AA US Corporate option-adjusted spread
-                   BAMLC0A3CA  ICE BofA A  US Corporate option-adjusted spread
-* Equity risk premium  Prof. Aswath Damodaran (NYU Stern), implied ERP history (histimpl.xls).
-
-Raw responses are saved unchanged to data/raw/market/. This folder is committed to git because providers can
-revise or remove historical data. data/raw/market/manifest.csv records the URL, time and SHA-256 of every file.
-
-Usage:  python -m src.market_fetch
-
-Note: Yahoo Finance (HTTP 429) and FRED (timeouts) often block scripted requests. For this project the files in
-data/raw/market/ were retrieved through a browser session on the author's machine, and each price file was verified
-against a checksum of the source response (see docs/valuation.md, section 8). The Damodaran workbook was downloaded by
-this script and matches the browser copy byte for byte (same SHA-256).
+Yahoo and FRED often block scripted requests, so the files in data/raw/market/ were saved from a browser
+and checked against the source responses (see docs/valuation.md). manifest.csv has the URL and SHA-256 of each file.
 """
 from __future__ import annotations
 

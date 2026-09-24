@@ -1,11 +1,6 @@
-"""Latest quarter before the valuation date: Q1 FY2025 (12 weeks to 24 Nov 2024), from the 10-Q inline XBRL.
+"""Q1 FY2025 (12 weeks to 24 Nov 2024) from the 10-Q: the latest quarter before the valuation date.
 
-Used for two things:
-* checking the FY2025 forecast against actual year-to-date trends
-  (Q1 FY2025 compared with Q1 FY2024), and
-* the valuation-date balance sheet (cash, debt, leases, share count) that the Phase 4 equity bridge uses.
-
-Output: data/processed/quarter_q1_fy2025.csv. Each value has a source link, as in financials_long.csv.
+Used to sanity-check the FY2025 forecast and as the balance sheet for the DCF equity bridge.
 """
 from __future__ import annotations
 

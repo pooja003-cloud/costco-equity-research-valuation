@@ -1,20 +1,8 @@
-"""Build the fully linked Excel valuation model: outputs/COST_Valuation_Model.xlsx.
+"""Builds outputs/COST_Valuation_Model.xlsx, a formula-driven copy of the Python model.
 
-The workbook repeats the Python model with live Excel formulas, so a reviewer can trace and change every number:
-  Cover        guide, colour legend, headline outputs
-  Historicals  FY2019-FY2024 statements from the 10-K XBRL; each hardcode has a comment with its XBRL concept and filing
-  Assumptions  forecast drivers with a Bear / Base / Bull switch (cell C5)
-  Forecast     integrated income statement, balance sheet and cash flow FY2025-FY2029; cash is the plug; balance check
-  Beta         60 monthly returns, SLOPE / RSQ regression against the S&P 500
-  WACC         CAPM cost of equity, cost of debt, market-value weights
-  DCF          UFCF, stub + mid-year timing, value-driver terminal value, equity bridge, implied multiples
-  Sensitivity  WACC x g and RONIC x g grids as live formulas; revenue x margin grid (static, from src/sensitivity.py)
-  Comps        peer inputs, EV and multiples, quartiles, implied Costco value
-  Summary      football-field table
-  Checks       Excel results vs. the Python pipeline (every difference must be ~0)
-
-Colour convention: blue = hardcoded input, black = formula, green = link to another sheet, yellow fill = key lever.
-Run:  python -m src.build_excel   (then recalculate in Excel or LibreOffice; the committed copy has cached values)
+Sheets: Cover, Historicals, Assumptions, Forecast, Beta, WACC, DCF, Sensitivity, Comps, Summary, Checks.
+Blue = input, black = formula, green = link to another sheet, yellow = key assumption.
+Open in Excel or LibreOffice afterwards so the formulas recalculate.
 """
 from __future__ import annotations
 
@@ -118,7 +106,6 @@ def fill_placeholders(text, rows):
     return text
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_historicals(wb):
     s = S(wb.create_sheet("Historicals"))
     s.title("Historical financial statements, FY2019-FY2024 ($ millions)",
@@ -192,7 +179,6 @@ def build_historicals(wb):
     return s, cols
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_assumptions(wb):
     s = S(wb.create_sheet("Assumptions"))
     s.title("Forecast and valuation assumptions (FY2025-FY2029)",
@@ -311,7 +297,6 @@ def build_assumptions(wb):
     return s, yc
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_forecast(wb, H, hc, A, ac):
     s = S(wb.create_sheet("Forecast"))
     s.title("Integrated three-statement forecast ($ millions)",
@@ -421,7 +406,6 @@ def build_forecast(wb, H, hc, A, ac):
     return s, cols
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_beta(wb):
     s = S(wb.create_sheet("Beta"))
     s.title("Beta regression: Costco vs. S&P 500, 60 monthly total returns (Feb 2020 - Jan 2025)",
@@ -504,7 +488,6 @@ def build_wacc(wb, A):
     return s
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_dcf(wb, F, fcols, W, A):
     s = S(wb.create_sheet("DCF"))
     s.title("Discounted cash flow valuation, 31 Jan 2025 ($ millions)",
@@ -621,7 +604,6 @@ def build_dcf(wb, F, fcols, W, A):
     return s, cols
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_sensitivity(wb, D, dcols):
     s = S(wb.create_sheet("Sensitivity"))
     s.title("Sensitivity analysis: DCF value per share ($)",
@@ -697,7 +679,6 @@ def build_sensitivity(wb, D, dcols):
     return s
 
 
-# ---------------------------------------------------------------------------------------------------------------
 def build_comps(wb):
     s = S(wb.create_sheet("Comps"))
     s.title("Comparable-company analysis, 31 Jan 2025 ($ millions)",

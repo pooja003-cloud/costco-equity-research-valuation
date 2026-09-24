@@ -1,4 +1,4 @@
-"""Sensitivity grids and scenarios must be centred on the base case and move in the right direction."""
+"""Grids and scenarios are centred on the base case and move the right way."""
 import numpy as np
 import pytest
 

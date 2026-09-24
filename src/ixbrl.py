@@ -1,10 +1,7 @@
-"""Minimal inline-XBRL (iXBRL) reader for SEC filing documents.
+"""Small inline-XBRL reader for SEC filings.
 
-The SEC companyfacts API only carries non-dimensional facts from standard taxonomies. Costco reports
-net sales vs. membership fees and its geographic segments as *dimensional* facts, for example
-Revenues with srt:ProductOrServiceAxis = cost:MembershipMember. So we read those facts from the
-filing itself. Every fact keeps its XBRL element id, so any number can be traced back to one exact
-tag in the 10-K.
+Needed because companyfacts doesn't include dimensional facts, and Costco reports membership fees and
+segments that way (e.g. Revenues with ProductOrServiceAxis = MembershipMember).
 """
 from __future__ import annotations
 

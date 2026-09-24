@@ -1,28 +1,11 @@
-"""Download the raw SEC EDGAR data this project is built on.
+"""Downloads the SEC data: companyfacts and filing history for Costco and the peers, plus Costco's
+10-K and 10-Q documents. Every file is logged with its SHA-256 in data/raw/manifest.csv.
 
-What it downloads
------------------
-* ``company_tickers.json``: the SEC ticker-to-CIK map, used to check the CIKs in config/settings.json.
-* For Costco and every candidate peer:
-    - ``submissions`` JSON (filing history, including older pages)
-    - ``companyfacts`` JSON (every XBRL fact the company has reported)
-* For Costco only: the primary document of
-    - each annual report (10-K) for fiscal years 2020-2024, and
-    - each 10-Q filed after FY2024 year-end and on or before the valuation date (31 Jan 2025).
-  These documents are inline XBRL. We use them for segment data and for operating metrics
-  (warehouses, members, renewal rates) that the companyfacts API does not carry.
-
-Every file is logged to ``data/raw/manifest.csv`` with its URL, download time, size and SHA-256.
-The filings are logged to ``data/raw/filing_index.csv``. Both files are committed to git, so anyone
-can check that a later download matches the one used here.
-
-Usage
------
     export SEC_USER_AGENT="Your Name your.email@example.com"
-    python -m src.sec_fetch
+    python -m src.sec_fetch              # everything
+    python -m src.sec_fetch --only PSMT  # add one company
 
-SEC fair-access policy: identify yourself in the User-Agent and send no more than 10 requests per second.
-https://www.sec.gov/os/accessing-edgar-data
+SEC fair-access rules: identify yourself and keep under 10 requests a second.
 """
 from __future__ import annotations
 
@@ -154,8 +137,7 @@ def select_costco_filings(filings: list[dict]) -> list[dict]:
 
 
 def fetch_only(tickers: list[str]) -> None:
-    """Add companies to an existing download (e.g. a new peer) without re-downloading everything.
-    Fetches company facts and filing history for each ticker and appends them to the manifest."""
+    """Adds companies (e.g. a new peer) to an existing download and appends them to the manifest."""
     dl = Downloader()
     raw = dl.fetch("https://www.sec.gov/files/company_tickers.json",
                    RAW_SEC / "company_tickers.json", "SEC ticker-to-CIK map")
