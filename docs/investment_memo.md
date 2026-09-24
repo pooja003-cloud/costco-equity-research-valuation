@@ -57,11 +57,11 @@ The base case is anchored to management's FY2025 plans (26 net new warehouses, ~
   - Beta 0.89 (60-month regression, Blume-adjusted).
   - Equity risk premium 4.33% (Damodaran, January 2025).
   - Debt is 1.5% of capital.
-- **Terminal value.** 3.0% growth, with reinvestment tied to a 25% return on new capital. It is 81% of enterprise value and implies 9.9x FY2029 EBITDA.
+- **Terminal value.** 3.0% growth, with reinvestment tied to a 25% return on new capital. It is 81% of enterprise value and implies 10.3x FY2029 EBITDA at year-end.
 - **DCF result.** Enterprise value $145.3bn plus $4.5bn net cash gives **$337 per share**.
-- **Comparable companies.** Peer-median EV/EBITDA (8.7x) implies $240 and peer-median P/E (16.4x) $280. Walmart/BJ's multiples give $452–$548. Costco trades at **36.5x LTM EBITDA and 57x earnings**, above even Walmart (20x, 40x).
+- **Comparable companies.** Peer-median EV/EBITDA (8.7x) implies $240 and peer-median P/E (16.4x) $280. A range anchored on Walmart and BJ's, with Walmart as the ceiling, gives about **$450–$690**. Costco trades at **36.5x LTM EBITDA and 57x earnings**, above even Walmart (20x, 40x).
 - **Sensitivity.** Across WACC 7.4–9.4% and growth 2–4% the value ranges from $263 to $495. Bear/base/bull give $263/$337/$400, a probability-weighted **$334**.
-- **Reverse DCF.** Even 7% growth for another 100 years after FY2029 yields only ~$780.
+- **Reverse DCF.** Even 7% growth for another 100 years after FY2029 yields only ~$780. The implied 4.8% WACC is barely 0.2pp above the 10-year Treasury: the price treats Costco's cash flows as nearly risk-free.
 
 ![Valuation summary](../outputs/charts/14_football_field.png)
 
@@ -87,7 +87,7 @@ The base case is anchored to management's FY2025 plans (26 net new warehouses, ~
 
 ## 8. Conclusion
 
-Costco is an exceptional business, and the numbers show it: ~30% ROIC, negative working capital and a 93%-renewal fee stream. But at $980 the share price sits far above every fundamental estimate in this study ($208–$570). The base-case DCF is $337, and even the bull case reaches only $400. The premium is a bet that Costco's growth and safety last far longer than any explicit forecast can justify. **Admire the business; the valuation leaves no margin of safety.**
+Costco is an exceptional business, and the numbers show it: ~30% ROIC, negative working capital and a 93%-renewal fee stream. But at $980 the share price sits far above every fundamental estimate in this study ($208–$690). The base-case DCF is $337, and even the bull case reaches only $400. The premium is a bet that Costco's growth and safety last far longer than any explicit forecast can justify. **Admire the business; the valuation leaves no margin of safety.**
 
 ## 9. Model limitations
 

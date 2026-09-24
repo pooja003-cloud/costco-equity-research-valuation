@@ -87,7 +87,7 @@ const N = {
   gImp: pct(dcf["Reverse DCF: terminal growth implied by price"]),
   wImp: pct(dcf["Reverse DCF: WACC implied by price"]),
   wacc: pct(dcf.WACC, 2), g: pct(dcf["Terminal growth"]), ronic: pct(dcf["Terminal RONIC"], 0),
-  tvShare: pct(dcf["Terminal value as % of EV"], 0), tvMult: x(dcf["Implied terminal EV/EBITDA (FY2029)"], 1),
+  tvShare: pct(dcf["Terminal value as % of EV"], 0), tvMult: x(dcf["Implied terminal EV/EBITDA (FY2029 year-end basis, comparable to trading multiples)"], 1),
   rf: pct(wacc["Risk-free rate (10y UST, 31 Jan 2025)"], 2), erp: pct(wacc["Equity risk premium (Damodaran, Jan 2025)"], 2),
   beta: wacc["Adjusted beta (Blume)"].toFixed(2),
   feeShare: pct(hist.membership_fees_pct_operating_income.FY2024, 0),
@@ -103,7 +103,7 @@ const N = {
   opLo: $(Math.min(...rmVals)), opHi: $(Math.max(...rmVals)),
   lowerW: lowerRow, lowerV: $(wg[lowerRow]["3.0%"]),
   dur8: dur8[2], dur7_100: $(dur7[5]),
-  t1Lo: $(implied["ev_ebitda|tier1_median"]), t1Hi: $(implied["pe|tier1_median"]),
+  t1Lo: $(implied["ev_ebitda|tier1_median"]), t1Hi: $(implied["pe|walmart"]),
 };
 
 // ---------- design -----------------------------------------------------------------------------------------------
@@ -237,7 +237,7 @@ async function main() {
       ["Comps: EV/EBITDA, peer 25th–75th", implied["ev_ebitda|peer_25th"], implied["ev_ebitda|peer_75th"]],
       ["Comps: P/E, peer 25th–75th", implied["pe|peer_25th"], implied["pe|peer_75th"]],
       ["Comps: EV/Revenue, peer 25th–75th", implied["ev_revenue|peer_25th"], implied["ev_revenue|peer_75th"]],
-      ["Walmart & BJ's multiples", implied["ev_ebitda|tier1_median"], implied["pe|tier1_median"]],
+      ["Comps: Walmart & BJ's, selected", implied["ev_ebitda|tier1_median"], implied["pe|walmart"]],
       ["7% growth for 10 to 100 more years", dur7[3], dur7[5]],
     ];
     const labels = rows.map(([l, lo, hi]) => `${l}   ${$(lo)}–${$(hi).slice(1)}`);
@@ -267,7 +267,7 @@ async function main() {
     // right: three stat cards
     const cards = [
       [N.wacc, "WACC", `Risk-free ${N.rf}, Blume beta ${N.beta}, Damodaran ERP ${N.erp}; debt is 1.5% of capital.`],
-      [N.tvShare, "of EV is terminal value", `Growth ${N.g}, reinvestment set by a ${N.ronic} return on new capital; ${N.tvMult} FY2029 EBITDA.`],
+      [N.tvShare, "of EV is terminal value", `Growth ${N.g}, reinvestment set by a ${N.ronic} return on new capital; ${N.tvMult} FY2029 EBITDA at year-end.`],
       [`${N.opLo}–${N.opHi.slice(1)}`, "operating range", "Comparable sales ±2pp a year and gross margin ±30bp. The gap is about duration and discount rate, not next year's numbers."],
     ];
     cards.forEach(([big, lab, body], k) => {
@@ -322,7 +322,7 @@ async function main() {
     circle(s, ic.change, cx + 0.22, cy + 0.2, 0.46, C.white);
     s.addText("What would change my view", { x: cx + 0.8, y: cy + 0.26, w: cw - 1.0, h: 0.34, fontFace: BODY, fontSize: 14, bold: true, color: C.navy, margin: 0, isTextBox: true });
     const triggers = [
-      ["Price. ", `A fall toward ${N.t1Lo}–${N.t1Hi.slice(1)}, where Walmart and BJ's multiples would value Costco.`],
+      ["Price. ", `A fall toward ${N.t1Lo}–${N.t1Hi.slice(1)}, the comps range anchored on Walmart and BJ's.`],
       ["Growth runway. ", `Evidence Costco can compound ~8% for decades: at 8% it needs ${N.dur8} years after FY2029 to justify ${N.price}.`],
       ["Discount rate. ", `A lasting fall in rates or risk premia. Each 0.5pp off WACC adds only ~$${Math.round(wg[lowerRow]["3.0%"] - base)}/share; the price needs ${N.wImp}.`],
       ["Not enough on its own: ", `a strong quarter. Operating upside moves value to ${N.opHi} at most.`],

@@ -44,6 +44,7 @@ Stock-based compensation stays in EBIT as a real cost; it is not added back.
 | + Working capital released | 1,015 | 1,035 | 916 | 891 | 918 |
 | **UFCF (full year)** | **5,992** | **6,473** | **6,757** | **7,141** | **7,573** |
 | Share of year counted | 77% | 100% | 100% | 100% | 100% |
+| **UFCF counted** | **4,610** | **6,473** | **6,757** | **7,141** | **7,573** |
 | Discount time (years) | 0.20 | 1.08 | 2.08 | 3.08 | 4.09 |
 | PV of UFCF | 4,537 | 5,935 | 5,717 | 5,573 | 5,450 |
 
@@ -63,8 +64,14 @@ TV            = 8,830 ÷ (8.38% − 3.0%)             = $164.1bn   →  PV $118.
 ```
 
 **Checks on the terminal value:**
-- It implies an exit multiple of **9.9× FY2029 EBITDA**.
-- It is **81% of enterprise value**, which is typical for a 5-year DCF.
+- **Implied exit multiple: 10.3× FY2029 EBITDA** at FY2029 year-end, the basis a trading multiple is measured on. The formula
+  gives $164.1bn one year before the first perpetuity flow's mid-point, i.e. a mid-year basis (9.9×). Restated to year-end,
+  TV × (1 + WACC)^0.5 = $170.8bn, which is 10.3×. Both carry the same present value. (The market EV is 26× FY2029E EBITDA.)
+- **Terminal FCF is 17% above FY2029 UFCF** ($8.83bn vs. $7.57bn). Reinvestment falls from about 22% of NOPAT in FY2029
+  (capex growth to support ~6% revenue growth) to 12% (g ÷ RONIC) once growth drops to 3%. This is what the value-driver
+  formula is designed to do; the alternative of growing FY2029 UFCF at 3% gives $306 (section 6).
+- It is **81% of enterprise value**, slightly above the 80% level at which reviewers usually ask for stress tests
+  (see docs/sensitivity.md, including a WACC × exit-multiple cross-check).
 
 ## 4. Enterprise value to value per share
 
@@ -94,6 +101,14 @@ Holding the base-case forecast fixed, the market price requires **one** of the f
 | WACC | 8.38% | **4.8%** (an equity risk premium of 0.3%) |
 
 At the price, Costco trades at **34× FY2025E EBITDA and 57× FY2025E EPS**; the DCF value corresponds to 11.5× EBITDA.
+
+Two ways to read these numbers:
+- **The implied WACC of 4.8% is only about 0.2pp above the 10-year Treasury yield (4.58%).** The price treats Costco's cash
+  flows as close to risk-free.
+- **7% perpetual growth is not a credible alternative.** It exceeds long-run nominal GDP growth and would require
+  reinvesting 28% of NOPAT (7% ÷ 25%) forever.
+- **As an exit multiple,** the price needs Costco to be worth **35× FY2029 EBITDA** at FY2029 year-end, against 10.3× in the
+  base case and roughly 20× for Walmart today.
 
 ### How long would high growth have to last?
 
@@ -125,6 +140,7 @@ This is the reconciliation the project guideline asks for. It explains why anoth
 |---|---|---|---:|
 | Terminal value timing | Consistent with mid-year flows | Discount TV from end of FY2029 | $337 → $326 |
 | Terminal cash flow | Value-driver (RONIC 25%) | FY2029 UFCF × (1 + g) | $337 → $306 |
+| Beta | Costco regression, Blume-adjusted (0.89) | Raw regression beta (0.84); WACC 8.16% | $337 → $351 |
 | Beta | Costco regression (0.89) | Peer median relevered (0.62) | $337 → $425 |
 | Equity risk premium | Implied, 4.33% | Historical-style 5.0% | $337 → $305 |
 | Cash | All treated as excess | All treated as operating | $337 → $310 |
@@ -136,6 +152,10 @@ This is the reconciliation the project guideline asks for. It explains why anoth
 - **Balance-sheet timing.** Net debt comes from 24 Nov 2024 (the latest filing); movements between then and 31 Jan 2025 are not captured.
 - **Stub calculation.** The FY2025 stub uses 40/52 of the full-year cash flow, which ignores seasonality. The holiday quarter falls inside the stub.
 - **Beta.** Historical and backward-looking. The 2020–21 pandemic period is inside the regression window.
+- **Finance-lease additions.** Assets acquired under finance leases are non-cash, so they are not in capex. Reinvestment is
+  slightly understated; the effect is minor (finance leases are $1.5bn in total).
+- **Presentation rounding.** Inputs shown rounded (beta 0.89, cost of debt 5.15%) give a WACC of 8.36%; the model uses
+  unrounded inputs (beta 0.8946, 5.155%), which give 8.38%.
 - **Cost of debt.** Uses AA/A index spreads, not Costco-specific bond yields. Debt is 1.5% of capital, so the effect is negligible.
 
 ## 8. Data collection note

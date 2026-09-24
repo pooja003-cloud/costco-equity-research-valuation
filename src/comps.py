@@ -72,6 +72,8 @@ def build() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         "costco": df.loc[TICKER, MULTIPLES + ["growth_adj_ev_ebitda"]],
     })
     stats["costco_premium_to_median"] = stats["costco"] / stats["peer_median"] - 1
+    # Walmart alone: the most expensive peer and the only one at Costco's scale; used as the ceiling of the selected range
+    stats["walmart"] = df.loc["WMT", MULTIPLES + ["growth_adj_ev_ebitda"]]
 
     # implied Costco value per share from peer multiples
     c = df.loc[TICKER]
@@ -80,7 +82,7 @@ def build() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
             "ps": ("ltm_revenue", "equity")}
     imp = []
     for mult, (metric, kind) in base.items():
-        for col in ["peer_25th", "peer_median", "peer_75th", "tier1_median"]:
+        for col in ["peer_25th", "peer_median", "peer_75th", "tier1_median", "walmart"]:
             m = stats.loc[mult, col]
             v = m * c[metric]
             eq = v + net_cash if kind == "ev" else v

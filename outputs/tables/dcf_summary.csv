@@ -15,7 +15,11 @@ Diluted shares (m),444.802
 Value per share ($),336.684
 Share price 31 Jan 2025 ($),979.88
 Upside / (downside),-0.656403
-Implied terminal EV/EBITDA (FY2029),9.9162
+Terminal FCF (FY2030) vs. FY2029 UFCF,0.166018
+"Implied terminal EV/EBITDA (FY2029, mid-year basis)",9.9162
+"Implied terminal EV/EBITDA (FY2029 year-end basis, comparable to trading multiples)",10.3235
+Market EV / FY2029E EBITDA,26.0732
+Reverse DCF: FY2029 year-end exit multiple implied by price,35.3406
 Market EV / FY2025E EBITDA,34.1656
 DCF EV / FY2025E EBITDA,11.5059
 Reverse DCF: terminal growth implied by price,0.0704914
@@ -23,3 +27,5 @@ Reverse DCF: WACC implied by price,0.0481226
 Reverse DCF: ERP implied by price (beta held),0.00276965
 Cross-check: value per share at peer-beta WACC,425.341
 Cross-check: value per share treating all cash as operating,310.094
+Cross-check: WACC with raw (unadjusted) beta,0.0816105
+Cross-check: value per share with raw beta,350.665

@@ -35,5 +35,5 @@ EV/EBITDA) and EV definition are appropriate. Do not invent company-specific fac
 
 **Implied Costco value per share (peer median):**
 - EV/EBITDA $240; P/E $280; EV/Revenue $384
-- Tier 1 median: $452–$570
+- Tier 1 median: EV/EBITDA $452, P/E $548 (EV/Revenue $570); Walmart alone: EV/EBITDA $546, P/E $688
 - DCF: $337; price: $979.88

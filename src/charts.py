@@ -407,7 +407,7 @@ def football_field() -> None:
         ("Comps: EV/EBITDA, peer 25th-75th", ip.loc["ev_ebitda", "peer_25th"], ip.loc["ev_ebitda", "peer_75th"], ip.loc["ev_ebitda", "peer_median"]),
         ("Comps: P/E, peer 25th-75th", ip.loc["pe", "peer_25th"], ip.loc["pe", "peer_75th"], ip.loc["pe", "peer_median"]),
         ("Comps: EV/Revenue, peer 25th-75th", ip.loc["ev_revenue", "peer_25th"], ip.loc["ev_revenue", "peer_75th"], ip.loc["ev_revenue", "peer_median"]),
-        ("Comps: Walmart & BJ's median, EV/EBITDA to P/E", ip.loc["ev_ebitda", "tier1_median"], ip.loc["pe", "tier1_median"], None),
+        ("Comps selected range: Tier 1 median to Walmart", ip.loc["ev_ebitda", "tier1_median"], ip.loc["pe", "walmart"], None),
     ]
     fig, ax = plt.subplots(figsize=(11, 5.2))
     fig.subplots_adjust(top=0.80, bottom=0.12, left=0.33, right=0.95)

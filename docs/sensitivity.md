@@ -62,6 +62,18 @@ The guideline asks for this sensitivity. It is tested two ways.
 
 The full 5×5 grid is in `outputs/tables/sens_terminal_cf.csv`.
 
+**(c) Cross-check: exit multiple instead of perpetual growth.** Terminal value = multiple × FY2029 EBITDA, at FY2029 year-end
+(4.59 years). The base case's growth-formula TV is equivalent to **10.3×**.
+
+| WACC \ FY2029 EV/EBITDA | 10× | 15× | 20× | 25× | 30× |
+|---|---:|---:|---:|---:|---:|
+| 7.38% | $341 | $475 | $609 | $743 | $877 |
+| **8.38%** | $328 | $457 | $585 | $714 | $843 |
+| 9.38% | $317 | $440 | $563 | $686 | $810 |
+
+Even a 20× exit (roughly Walmart's current multiple) gives about $585. The price needs **35×** at the base WACC. The market
+EV today is 26× FY2029E EBITDA. Full grid: `outputs/tables/sens_wacc_exit_multiple.csv`.
+
 ## 4. Bear / base / bull scenarios
 
 WACC is held at 8.38% in all three scenarios, so they isolate *business* outcomes. Discount-rate risk is covered by grid 1.
@@ -97,7 +109,7 @@ WACC is held at 8.38% in all three scenarios, so they isolate *business* outcome
 | Comps EV/EBITDA (peer 25th–75th) | $208 | $240 | $359 |
 | Comps P/E (peer 25th–75th) | $252 | $280 | $408 |
 | Comps EV/Revenue (peer 25th–75th) | $330 | $384 | $423 |
-| Comps, Walmart & BJ's median (EV/EBITDA to P/E) | $452 | | $548 |
+| Comps selected range: Tier 1 median EV/EBITDA to Walmart P/E | $452 | | $688 |
 | 52-week trading range (monthly closes) | $723 | | $980 |
 
 ## What would change the view

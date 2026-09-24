@@ -100,6 +100,12 @@ def value(wacc: float, g: float, ronic: float, fc: dict | None = None, tax: floa
         "shares_diluted": cs["shares_diluted"], "value_per_share": per_share, "price": cs["price"],
         "upside": per_share / cs["price"] - 1,
         "implied_tv_ev_ebitda_fy29": tv / ebitda_29, "implied_tv_ev_ebitda_fy30": tv / (ebitda_29 * (1 + g)),
+        # TV restated to FY2029 year-end (t_last + 0.5), the date a trading multiple would be measured at.
+        # Same PV: pv_tv = tv_yearend / (1 + wacc) ** (tv_time + 0.5).
+        "terminal_value_yearend": tv * (1 + wacc) ** 0.5,
+        "implied_tv_ev_ebitda_fy29_yearend": tv * (1 + wacc) ** 0.5 / ebitda_29,
+        "ebitda_fy29": ebitda_29, "fcf_fy29": last["ufcf"],
+        "market_ev_ebitda_fy29": (cs["market_cap"] - net_cash) / ebitda_29,
         "ev_ebitda_fy25_at_value": ev / t["ebitda"].iloc[0],
         "market_ev": cs["market_cap"] - net_cash,
         "market_ev_ebitda_fy25": (cs["market_cap"] - net_cash) / t["ebitda"].iloc[0],
@@ -150,6 +156,15 @@ def growth_duration_table(wacc: float, g: float, ronic_list=(0.25, 0.30), g_high
     return pd.DataFrame(rows)
 
 
+def value_exit_multiple(wacc: float, multiple: float, fc: dict | None = None, cs: dict | None = None,
+                        tax: float | None = None) -> float:
+    """Value per share with the terminal value set as `multiple` x FY2029 EBITDA at FY2029 year-end
+    (discounted at t_last + 0.5 years). Explicit cash flows as in value()."""
+    d = value(wacc, 0.03, 0.25, fc=fc, cs=cs, tax=tax, detail=True)   # g/RONIC do not affect the explicit flows
+    pv_tv = multiple * d["ebitda_fy29"] / (1 + wacc) ** (d["tv_discount_time"] + 0.5)
+    return (d["sum_pv_ufcf"] + pv_tv + d["net_cash"]) / d["shares_diluted"]
+
+
 def solve(f, lo: float, hi: float, target: float, tol: float = 1e-7) -> float:
     """Bisection: find x in [lo, hi] with f(x) = target (f monotonic)."""
     flo = f(lo) - target
@@ -180,6 +195,10 @@ def main() -> dict:
     r["implied_erp"] = (r["implied_erp"] - w["risk_free"]) / w["adjusted_beta"]
     r["value_with_peer_beta_wacc"] = value(w["wacc_with_peer_beta"], g, ronic, fc=fc, cs=cs)
     r["value_cash_excluded"] = r["value_per_share"] - r["cash_and_sti"] / r["shares_diluted"]
+    ke_raw = w["risk_free"] + w["raw_beta"] * w["erp"]
+    r["wacc_raw_beta"] = w["weight_equity"] * ke_raw + w["weight_debt"] * w["after_tax_cost_of_debt"]
+    r["value_with_raw_beta"] = value(r["wacc_raw_beta"], g, ronic, fc=fc, cs=cs)
+    r["implied_exit_multiple"] = solve(lambda m: value_exit_multiple(w["wacc"], m, fc=fc, cs=cs), 1.0, 80.0, price)
 
     r["growth_duration"] = growth_duration_table(w["wacc"], g, price=price, fc=fc, cs=cs)
 
@@ -194,13 +213,19 @@ def main() -> dict:
         ("- Debt (carrying value)", r["debt"]), ("- Finance lease liabilities", r["finance_leases"]),
         ("Equity value", r["equity_value"]), ("Diluted shares (m)", r["shares_diluted"]),
         ("Value per share ($)", r["value_per_share"]), ("Share price 31 Jan 2025 ($)", price), ("Upside / (downside)", r["upside"]),
-        ("Implied terminal EV/EBITDA (FY2029)", r["implied_tv_ev_ebitda_fy29"]),
+        ("Terminal FCF (FY2030) vs. FY2029 UFCF", r["fcf_next"] / r["fcf_fy29"] - 1),
+        ("Implied terminal EV/EBITDA (FY2029, mid-year basis)", r["implied_tv_ev_ebitda_fy29"]),
+        ("Implied terminal EV/EBITDA (FY2029 year-end basis, comparable to trading multiples)", r["implied_tv_ev_ebitda_fy29_yearend"]),
+        ("Market EV / FY2029E EBITDA", r["market_ev_ebitda_fy29"]),
+        ("Reverse DCF: FY2029 year-end exit multiple implied by price", r["implied_exit_multiple"]),
         ("Market EV / FY2025E EBITDA", r["market_ev_ebitda_fy25"]), ("DCF EV / FY2025E EBITDA", r["ev_ebitda_fy25_at_value"]),
         ("Reverse DCF: terminal growth implied by price", r["implied_g"]),
         ("Reverse DCF: WACC implied by price", r["implied_wacc"]),
         ("Reverse DCF: ERP implied by price (beta held)", r["implied_erp"]),
         ("Cross-check: value per share at peer-beta WACC", r["value_with_peer_beta_wacc"]),
         ("Cross-check: value per share treating all cash as operating", r["value_cash_excluded"]),
+        ("Cross-check: WACC with raw (unadjusted) beta", r["wacc_raw_beta"]),
+        ("Cross-check: value per share with raw beta", r["value_with_raw_beta"]),
     ]
     pd.DataFrame(summary, columns=["item", "value"]).to_csv(TABLES / "dcf_summary.csv", index=False, float_format="%.6g")
     pd.set_option("display.width", 200)

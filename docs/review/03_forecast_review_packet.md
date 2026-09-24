@@ -44,3 +44,8 @@ paid members 77.4m; gross margin +24bp; SG&A +14bp; management plans 29 openings
 - EPS: $17.31 / $19.00 / $20.33 / $21.72 / $23.13.
 - FCF: 7,032 / 7,656 / 8,075 / 8,628 / 9,240.
 - Balance sheet balances every year; cash is the plug and builds to ~$35bn by FY29.
+- FCF definition: CFO − capex. CFO = net income + D&A + stock-based compensation (non-cash, ~0.32% of revenue: $876m in FY25)
+  + working-capital release (FY25 $1,015m; deferred membership fees are held at 51.8% of fee income, the other lines at FY24
+  ratios to revenue). The DCF uses unlevered FCF and does **not** add SBC back.
+- Interest: expense fixed at $169m (fixed-rate notes, debt flat); income = 3.5% (FY25), 3.25% (FY26), 3.0% (FY27–29) on
+  beginning cash and short-term investments.

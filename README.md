@@ -88,7 +88,7 @@ decades of high growth or a much lower required return (4.8% WACC) than CAPM giv
 | Peer median (WMT, BJ, TGT, KR, DG, DLTR) | 8.7x | 16.4x | $240 |
 | Tier 1 median (WMT, BJ) | 16.7x | 32.1x | $452 |
 
-Every peer-based value ($208–$570 per share) is closer to the DCF ($337) than to the $980 price. Costco's premium is
+Anchoring on Walmart and BJ's, with Walmart as the ceiling, comps support about $450–$690 per share; the $980 price is 42–117% above that. Costco's premium is
 company-specific; the sector is not generally priced this high. Peer rationale and method: [docs/comps.md](docs/comps.md).
 
 ![Comps](outputs/charts/12_comps_multiples.png)
@@ -102,6 +102,7 @@ company-specific; the sector is not generally priced this high. Peer rationale a
 
 - **Probability-weighted value (25/50/25):** $334.
 - **Most favourable WACC × growth cell:** 7.4% WACC with 4.0% growth gives $495.
+- **Exit-multiple cross-check:** the base case equals 10.3× FY2029 EBITDA; even 20× gives ~$585, and the price needs 35×.
 - **Growth vs. margin:** adding 2pp of comparable sales every year adds only ~4% to value; margin and the discount rate matter more.
 
 Grids, scenario definitions and "what would change the view": [docs/sensitivity.md](docs/sensitivity.md).
@@ -110,7 +111,7 @@ Grids, scenario definitions and "what would change the view": [docs/sensitivity.
 
 ## Excel model
 
-[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 882 live formulas and no formula errors. It has 11 sheets:
+[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 887 live formulas and no formula errors. It has 11 sheets:
 - **Cover:** headline outputs and a colour legend.
 - **Historicals:** every hardcoded number has a comment with its XBRL tag and filing link.
 - **Assumptions:** includes a Bear / Base / Bull switch.

@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 
 from src.config import CONFIG_DIR, TABLES
-from src.dcf import value
+from src.dcf import value, value_exit_multiple
 from src.forecast import build, load_assumptions
 from src.wacc import compute as compute_wacc, load_params
 
@@ -85,6 +85,18 @@ def terminal_cf_grid(w, cs, p, fc) -> pd.DataFrame:
     return pd.DataFrame(rows).T.rename_axis("WACC \\ terminal FCF")
 
 
+EXIT_MULTIPLES = [10, 15, 20, 25, 30]
+
+
+def wacc_exit_multiple_grid(w, cs, p, fc) -> pd.DataFrame:
+    """Cross-check: terminal value = multiple x FY2029 EBITDA at FY2029 year-end, instead of the growth formula."""
+    rows = {}
+    for dw in WACC_STEPS:
+        ww = w["wacc"] + dw
+        rows[f"{ww:.2%}"] = {f"{m}x": value_exit_multiple(ww, m, fc=fc, cs=cs) for m in EXIT_MULTIPLES}
+    return pd.DataFrame(rows).T.rename_axis("WACC \\ FY2029 EV/EBITDA")
+
+
 def scenario_assumptions(a: dict, sc: dict) -> dict:
     aa = copy.deepcopy(a)
     if "comparable_sales_growth" in sc:
@@ -133,6 +145,7 @@ def run() -> dict:
         "revenue_margin": revenue_margin_grid(w, cs, p, a)[0],
         "ronic_g": ronic_g_grid(w, cs, p, fc),
         "terminal_cf": terminal_cf_grid(w, cs, p, fc),
+        "wacc_exit_multiple": wacc_exit_multiple_grid(w, cs, p, fc),
         "scenarios": scenarios(w, cs, p, a),
         "base_value": value(w["wacc"], p["terminal"]["growth"], p["terminal"]["ronic"], fc=fc, cs=cs),
         "price": cs["price"], "wacc": w["wacc"],
@@ -143,10 +156,10 @@ def run() -> dict:
 def main() -> dict:
     out = run()
     TABLES.mkdir(parents=True, exist_ok=True)
-    for k in ["wacc_g", "revenue_margin", "ronic_g", "terminal_cf", "scenarios"]:
+    for k in ["wacc_g", "revenue_margin", "ronic_g", "terminal_cf", "wacc_exit_multiple", "scenarios"]:
         out[k].to_csv(TABLES / f"sens_{k}.csv", float_format="%.6g")
     pd.set_option("display.width", 250)
-    for k in ["wacc_g", "revenue_margin", "ronic_g", "terminal_cf"]:
+    for k in ["wacc_g", "revenue_margin", "ronic_g", "terminal_cf", "wacc_exit_multiple"]:
         print(f"\n== {k} ($/share)\n", out[k].round(0).to_string())
     print("\n== scenarios\n", out["scenarios"].round(3).to_string())
     print("probability-weighted value:", round(out["scenarios"].attrs["probability_weighted"], 1), " price:", out["price"])

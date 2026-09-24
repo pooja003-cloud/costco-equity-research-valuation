@@ -1,7 +1,7 @@
 """Tests for the WACC and DCF: formulas, identities and sensible behaviour."""
 import pytest
 
-from src.dcf import main as dcf_main, value
+from src.dcf import main as dcf_main, value, value_exit_multiple
 from src.wacc import compute
 
 
@@ -74,3 +74,20 @@ def test_extended_growth_with_zero_years_equals_base_case(r):
     from src.dcf import value_with_extended_growth
     assert value_with_extended_growth(r["wacc"], 0.07, 0, r["g"], r["ronic"]) == pytest.approx(r["value_per_share"])
     assert value_with_extended_growth(r["wacc"], 0.07, 10, r["g"], r["ronic"]) > r["value_per_share"]
+
+
+def test_exit_multiple_year_end_basis_is_consistent(r):
+    """The growth-formula TV restated to FY2029 year-end, used as an exit multiple, must reproduce the base value."""
+    assert r["implied_tv_ev_ebitda_fy29_yearend"] == pytest.approx(r["implied_tv_ev_ebitda_fy29"] * (1 + r["wacc"]) ** 0.5)
+    v = value_exit_multiple(r["wacc"], r["implied_tv_ev_ebitda_fy29_yearend"])
+    assert v == pytest.approx(r["value_per_share"], abs=0.01)
+
+
+def test_price_implied_exit_multiple(r):
+    assert value_exit_multiple(r["wacc"], r["implied_exit_multiple"]) == pytest.approx(r["price"], abs=0.01)
+    assert r["implied_exit_multiple"] > r["market_ev_ebitda_fy29"]   # discounting back 4.6 years needs a higher multiple
+
+
+def test_raw_beta_cross_check(r, w):
+    assert r["wacc_raw_beta"] < w["wacc"]            # Blume pulls a sub-1 beta up
+    assert r["value_with_raw_beta"] > r["value_per_share"]
