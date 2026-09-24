@@ -185,7 +185,7 @@ async function main() {
       [ic.fee, "A fee engine that makes earnings durable",
         `Membership fees were ${N.feeShare} of FY2024 operating income, with ${N.renewal} renewal in the U.S. and Canada. The Sep 2024 fee rise lifts fee growth to ~${N.feeG25} in FY2025.`],
       [ic.cost, "A cost structure rivals struggle to copy",
-        `Fewer than 4,000 SKUs, suppliers paid after goods sell and fees collected upfront: working capital is ${N.nwc} of revenue and ROIC ~${N.roic}.`],
+        `Fewer than 4,000 SKUs, suppliers paid after goods sell and fees collected upfront: working capital is ${N.nwc} of revenue and ROIC ${N.roic} in FY2024.`],
       [ic.growth, "Growth is steady, not explosive",
         `Base case: revenue +${N.revCagr} a year to ${N.rev29} by FY2029, operating margin ${N.om24} to ${N.om29}, EPS ${N.eps29}.`],
     ];
@@ -324,7 +324,7 @@ async function main() {
     const triggers = [
       ["Price. ", `A fall toward ${N.t1Lo}–${N.t1Hi.slice(1)}, the comps range anchored on Walmart and BJ's.`],
       ["Growth runway. ", `Evidence Costco can compound ~8% for decades: at 8% it needs ${N.dur8} years after FY2029 to justify ${N.price}.`],
-      ["Discount rate. ", `A lasting fall in rates or risk premia. Each 0.5pp off WACC adds only ~$${Math.round(wg[lowerRow]["3.0%"] - base)}/share; the price needs ${N.wImp}.`],
+      ["Discount rate. ", `A lasting fall in rates or risk premia. Near the base, 0.5pp off WACC adds ~$${Math.round(wg[lowerRow]["3.0%"] - base)}/share (more as WACC falls: 6.0% gives ~$596); the price needs ${N.wImp}.`],
       ["Not enough on its own: ", `a strong quarter. Operating upside moves value to ${N.opHi} at most.`],
     ];
     s.addText(triggers.flatMap(([b, t], j) => [
