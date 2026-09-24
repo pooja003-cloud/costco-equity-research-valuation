@@ -2,168 +2,258 @@
 
 > **Independent academic research and valuation case study; not investment advice.** See [DISCLAIMER.md](DISCLAIMER.md).
 
-A fundamental equity research project on Costco Wholesale Corporation. It covers historical
-financial-statement analysis from SEC filings (FY2020–FY2024), a driver-based forecast,
-a DCF valuation, a WACC build, comparable-company analysis, sensitivity analysis and a two-page investment memo.
+## In plain English
 
-**Valuation date:** 31 January 2025. All market inputs (share prices, risk-free rate, peer multiples) are as of this date.
-Only filings public by this date are used.
+Costco runs membership warehouses: shoppers pay an annual fee, then buy in bulk at very low prices. On 31 January 2025,
+one Costco share cost **$979.88**.
 
-## Deliverables
+This project asks a simple question: **based on the cash Costco's business can be expected to generate, what is one share
+worth?**
+
+To answer it, I:
+
+1. rebuilt five years of Costco's financial statements (fiscal years 2020–2024) from its official filings with the U.S.
+   Securities and Exchange Commission;
+2. forecast the next five years (fiscal years 2025–2029), step by step, from warehouse openings, sales per warehouse and
+   membership fees;
+3. valued the company in three ways: from its future cash flows, by comparison with similar retailers, and by working
+   backwards from the share price to see what it assumes.
+
+**The answer:** my central estimate is about **$337 per share**, roughly a third of the market price. Comparison with
+similar retailers supports, at most, about **$690**. Costco is an excellent business, but at $980 investors are paying for
+many decades of strong growth, or treating Costco's profits as almost risk-free.
+
+Every number in the project is traced back to its source, and the full model can be rebuilt with one set of commands
+(see [Reproducing the results](#reproducing-the-results)). Terms in bold below are explained in the [glossary](#glossary).
+
+## Key results at a glance
 
 | | |
-|---|---|
-| Two-page investment memo | [PDF](outputs/COST_Investment_Memo.pdf) · [markdown source](docs/investment_memo.md) |
-| Slides: thesis, valuation, risks and what would change my view | [PowerPoint](outputs/COST_Equity_Research_Deck.pptx) · [PDF](outputs/COST_Equity_Research_Deck.pdf) |
-| Fully linked Excel model | [COST_Valuation_Model.xlsx](outputs/COST_Valuation_Model.xlsx) |
-| Historical analysis notebook | [01_historical_analysis.ipynb](notebooks/01_historical_analysis.ipynb) |
-| Comps and sensitivity tables | [outputs/tables/](outputs/tables/) |
-| Methodology and sources | [docs/](docs/) · external reviews in [model_review_log.md](docs/model_review_log.md) |
+|---|---:|
+| Share price on 31 January 2025 | $979.88 |
+| Value per share from **discounted cash flow** (central case) | **$337** |
+| Pessimistic / optimistic cases | $263 / $400 |
+| Range supported by the closest comparable companies (Walmart, BJ's, PriceSmart) | about $360–$690 |
+| Long-term growth the share price assumes, every year forever after 2029 (my central case uses 3%) | 7.0% |
+| Annual return investors would have to accept for the price to make sense (my estimate is 8.4%) | 4.8% |
 
-**Conclusion:** Costco is an exceptional business, but at $979.88 the price sits far above every fundamental estimate in
-this study. The base-case DCF is $337 per share (bear $263, bull $400). The price implies 7.0% growth forever after FY2029, or a 4.8% cost of capital.
+## What is in this repository
+
+| Deliverable | Files |
+|---|---|
+| Two-page investment memo | [PDF](outputs/COST_Investment_Memo.pdf) · [text source](docs/investment_memo.md) |
+| Slides: investment thesis, valuation, and risks and what would change my view | [PowerPoint](outputs/COST_Equity_Research_Deck.pptx) · [PDF](outputs/COST_Equity_Research_Deck.pdf) |
+| Fully linked Excel valuation model | [COST_Valuation_Model.xlsx](outputs/COST_Valuation_Model.xlsx) |
+| Historical analysis notebook (Python) | [01_historical_analysis.ipynb](notebooks/01_historical_analysis.ipynb) |
+| Comparable-company and sensitivity tables | [outputs/tables/](outputs/tables/) |
+| Methods, assumptions and sources | [docs/](docs/) |
+| External reviews and my responses | [docs/model_review_log.md](docs/model_review_log.md) |
+
+**Valuation date:** 31 January 2025. All market data (share prices, interest rates, other companies' valuations) is taken
+as of that date, and only filings that were public by then are used. Nothing that happened later is allowed into the model.
+
+## 1. Costco's past performance (fiscal years 2020–2024)
+
+- **Membership fees are small in sales but large in profit.** They were 1.9% of revenue but 52% of operating income in
+  fiscal year 2024. In the U.S. and Canada, 92.9% of members renewed.
+- **High returns on the money invested in the business.** **Return on invested capital** was 33% in fiscal year 2024
+  (about 30% on average since 2020), while Costco spent about twice its annual depreciation on new warehouses.
+- **Suppliers and members fund the growth.** Costco sells its inventory before it pays suppliers, and members pay their
+  fees in advance. So its **working capital** is negative (about −5% of revenue): growth releases cash instead of
+  using it.
+- **Growth has settled down.** After the 2021–2022 surge, comparable-store sales (excluding gasoline prices and currency
+  movements) grew 5–6% a year, plus about 2 percentage points a year from new warehouses.
+
+![Profit engine](outputs/charts/03_profit_engine.png)
+
+More detail: [docs/historical_analysis.md](docs/historical_analysis.md) and the [chart pack](outputs/charts/).
+
+## 2. Forecast (fiscal years 2025–2029)
+
+Revenue is built from its drivers rather than a single growth rate: the number of warehouses, sales growth in existing
+warehouses, and membership fees (paid members × fee per member, including the September 2024 fee increase). Every
+assumption is tied to the filings and explained in [docs/assumptions.md](docs/assumptions.md). The income statement,
+balance sheet and cash flow statement are fully linked, and automated tests confirm the balance sheet balances every year.
+
+| $ millions (except per share) | 2024 (actual) | 2025 (forecast) | 2029 (forecast) |
+|---|---:|---:|---:|
+| Revenue | 254,453 | 273,712 | 349,529 |
+| Operating margin | 3.65% | 3.72% | 3.77% |
+| Earnings per share ($, diluted) | 16.56 | 17.31 | 23.13 |
+| **Free cash flow** | 6,629 | 7,032 | 9,240 |
+
+## 3. Valuation from future cash flows (discounted cash flow, "DCF")
+
+A **discounted cash flow** valuation adds up the cash the business is expected to produce, with future cash worth less
+than cash today. The rate used to discount it is the **weighted average cost of capital (WACC)**, the return investors
+require for the risk they take.
+
+| | |
+|---|---:|
+| Required return (WACC), from a 4.58% 10-year U.S. Treasury yield, a **beta** of 0.89 and an **equity risk premium** of 4.33% | 8.38% |
+| Long-term growth after 2029 / return on new investment after 2029 | 3.0% / 25% |
+| **Enterprise value** (value of the business before cash and debt) | $145.3 billion |
+| **Value per share** | **$337** |
+| Share price, 31 January 2025 | $979.88 |
+
+**What the share price implies.** A **reverse DCF** asks what you would have to believe to justify $980. The answer is
+7.0% growth every year forever after 2029, or a required return of only 4.8%, barely above the 10-year Treasury yield
+(4.58%), as if Costco's profits were almost risk-free. Even 7% growth for another 100 years only reaches about $780.
+The next five years of cash flow account for just $61 of the $980 price.
+
+Full workings, method choices and limitations: [docs/valuation.md](docs/valuation.md).
+
+![Discounted cash flow bridge](outputs/charts/11_dcf_bridge.png)
+
+## 4. Comparison with similar companies ("comparable companies")
+
+This method values Costco the way the market values similar retailers, using ratios such as **enterprise value to
+EBITDA** and the **price-to-earnings ratio**. Figures are for the **last twelve months** before 31 January 2025.
+
+| | Enterprise value / EBITDA | Price / earnings | Implied value of one Costco share |
+|---|---:|---:|---:|
+| Costco | 36.5x | 57.4x | (market price $980) |
+| Walmart (the most expensive comparable company) | 20.2x | 40.3x | $546–$688 |
+| Median of the three membership-warehouse companies (Walmart, BJ's Wholesale, PriceSmart) | 13.2x | 23.9x | $359–$408 |
+| Median of all seven comparable companies | 8.8x | 18.4x | $243–$313 |
+
+The seven comparable companies are Walmart, BJ's Wholesale, PriceSmart, Target, Kroger, Dollar General and Dollar Tree.
+Using the three membership-warehouse companies as the main reference, with Walmart as the upper limit, gives about
+**$360–$690 per share**. The $980 price is 42–173% above that range. The premium is specific to Costco: the sector as a
+whole is not priced this high. Company choices and method: [docs/comps.md](docs/comps.md).
+
+![Valuation multiples](outputs/charts/12_comps_multiples.png)
+
+## 5. Sensitivity analysis and scenarios
+
+A **sensitivity analysis** shows how much the answer moves when the assumptions change.
+
+| | Pessimistic ("bear") | Central ("base") | Optimistic ("bull") |
+|---|---:|---:|---:|
+| Value per share | $263 | $337 | $400 |
+| Compared with the $979.88 price | −73% | −66% | −59% |
+
+- **Weighted by probability** (25% pessimistic, 50% central, 25% optimistic): $334.
+- **Most favourable combination tested** (7.4% required return with 4.0% long-term growth): $495.
+- **Valuing 2029 at a multiple instead of a growth rate:** my central case equals 10.3 times 2029 EBITDA. Even
+  20 times (roughly Walmart's level at the valuation date) gives about $585; the price needs about 35 times.
+- **What matters most:** adding 2 percentage points of sales growth every year adds only about 4% to value. The required
+  return and how long high growth lasts matter far more.
+
+Grids, scenario definitions and "what would change my view": [docs/sensitivity.md](docs/sensitivity.md).
+
+![Valuation summary](outputs/charts/14_football_field.png)
+
+## 6. External review
+
+The model was reviewed four times using finance review skills from ClaudeFinanceLab (claudefinancelab.com), each run in a
+separate conversation with no access to how the model was built: forecast, discounted cash flow, comparable companies and the memo.
+Every point raised, my response and whether the model changed are recorded in
+[docs/model_review_log.md](docs/model_review_log.md). One outcome: PriceSmart was added as a comparable company.
+
+## 7. Excel model
+
+[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 908 live formulas
+and no formula errors. Its 11 sheets:
+
+- **Cover:** headline results and a colour legend.
+- **Historicals:** every typed-in number has a comment giving its source in the filing.
+- **Assumptions:** includes a switch between the pessimistic, central and optimistic cases.
+- **Forecast:** the three linked financial statements, with a balance check.
+- **Beta:** Costco's beta calculated from 60 monthly returns.
+- **WACC:** the required return.
+- **DCF:** the discounted cash flow valuation.
+- **Sensitivity:** live tables that recalculate with the assumptions.
+- **Comps:** the comparable companies.
+- **Summary:** all valuation methods side by side.
+- **Checks:** reconciles every headline number to the Python model; all checks read *ALL OK*.
+
+Colour convention: blue = input, black = formula, green = link to another sheet, yellow = key assumption.
+Switching the scenario reproduces the Python pessimistic ($263) and optimistic ($400) values exactly.
+
+## 8. Data sources
+
+- **Costco's financial statements** (fiscal years 2020–2024, plus the 2019 opening balance sheet) come directly from its
+  annual reports (**Form 10-K**) and quarterly report (**Form 10-Q**) on the U.S. Securities and Exchange Commission's
+  EDGAR system, read from the machine-readable (**XBRL**) data in each filing. Every number carries a link to the exact
+  item in the filing.
+- **Operating figures** that are only in the report text (members, renewal rates, comparable-store sales) are stored with
+  the exact sentence they come from and are re-checked against the filing every time the model is built.
+- **Cross-check:** 320 values were compared with the Securities and Exchange Commission's own data service; all 320 match.
+- **Market data:** share prices from Yahoo Finance; interest rates and credit spreads from the Federal Reserve Bank of
+  St. Louis (FRED); the equity risk premium from Professor Aswath Damodaran (New York University). Each file is
+  recorded with its address, download time and a checksum.
+
+Details: [docs/data_sources.md](docs/data_sources.md).
+
+| Dataset | File |
+|---|---|
+| Income statement, balance sheet, cash flow statement ($ millions) | `data/processed/income_statement.csv`, `balance_sheet.csv`, `cash_flow.csv` |
+| Segments and merchandise categories | `data/processed/segments.csv` |
+| Operating figures | `data/processed/operating_metrics.csv` |
+| Every number with its source link | `data/processed/financials_long.csv`, `operating_metrics_long.csv` |
 
 ## Repository layout
 
 ```
-config/          settings.json (company, peers, valuation date), assumptions.json (forecast)
-src/             Python pipeline
-data/raw/        SEC downloads (git-ignored; manifest.csv is committed)
-data/manual/     figures hand-collected from filing text, each with a citation
-data/processed/  clean, source-tracked datasets
-notebooks/       analysis notebooks
-docs/            methodology, data sources, assumptions
-scripts/         slide-deck generator (Node.js)
-outputs/         model, tables, charts, memo, slides
-tests/           data-integrity and model tests
+config/          company, comparable companies, valuation date and forecast assumptions
+src/             Python code for every step
+data/raw/        downloaded source files (large SEC files are not stored; a manifest records them)
+data/manual/     figures taken from filing text, each with its quotation
+data/processed/  clean datasets with a source link for every number
+notebooks/       analysis notebook
+docs/            methods, assumptions, sources and review log
+scripts/         slide generator (Node.js)
+outputs/         Excel model, tables, charts, memo and slides
+tests/           101 automated checks on the data and the model
 ```
 
-## Historical analysis: highlights
+## Reproducing the results
 
-- **Membership fees are 1.9% of revenue but 52% of operating income** (FY2024), with a 92.9% U.S./Canada renewal rate.
-- **~30% return on invested capital**, while capex runs at about 2x depreciation to fund new warehouses.
-- **Negative working capital (about −5% of revenue):** suppliers and members finance growth.
-- **Growth normalized** after the FY2021–22 surge to 5–6% comparable sales (ex gas & FX) plus ~2 points from new warehouses.
-
-![Profit engine](outputs/charts/03_profit_engine.png)
-
-More in [docs/historical_analysis.md](docs/historical_analysis.md) and the [chart pack](outputs/charts/).
-
-## Base-case forecast (FY2025–FY2029)
-
-Revenue is built from warehouse openings, comparable sales and membership fees (members × fee per member, including the
-Sep 2024 fee increase). Every assumption is tied to the filings and explained in [docs/assumptions.md](docs/assumptions.md).
-The three statements are fully linked, and tests confirm the balance sheet balances every year.
-
-| $m | FY24A | FY25E | FY29E |
-|---|---:|---:|---:|
-| Revenue | 254,453 | 273,712 | 349,529 |
-| Operating margin | 3.65% | 3.72% | 3.77% |
-| Diluted EPS ($) | 16.56 | 17.31 | 23.13 |
-| Free cash flow | 6,629 | 7,032 | 9,240 |
-
-## Valuation (as of 31 Jan 2025)
-
-| | |
-|---|---:|
-| WACC (CAPM: Rf 4.58%, beta 0.89, ERP 4.33%) | 8.38% |
-| Terminal growth / RONIC | 3.0% / 25% |
-| Enterprise value | $145.3bn |
-| **DCF value per share** | **$337** |
-| Share price (31 Jan 2025) | $979.88 |
-| Terminal growth the price implies | 7.0% |
-
-The next five years of cash flow account for only $61 of the $980 share price. Even if growth continued at 7% a year
-for another 100 years (instead of fading to 3%), the DCF would reach about $780. The price requires either many
-decades of high growth or a much lower required return (4.8% WACC) than CAPM gives. Full workings, method choices and limitations: [docs/valuation.md](docs/valuation.md).
-
-![DCF bridge](outputs/charts/11_dcf_bridge.png)
-
-## Comparable companies
-
-| LTM, 31 Jan 2025 | EV/EBITDA | P/E | Implied Costco value (peer median EV/EBITDA) |
-|---|---:|---:|---:|
-| Costco | 36.5x | 57.4x | |
-| Walmart | 20.2x | 40.3x | |
-| Peer median (WMT, BJ, PSMT, TGT, KR, DG, DLTR) | 8.8x | 18.4x | $243 |
-| Tier 1 median (WMT, BJ, PSMT) | 13.2x | 23.9x | $359 |
-
-Anchoring on the three membership-warehouse peers (Walmart, BJ's, PriceSmart), with Walmart as the ceiling, comps support about $360–$690 per share; the $980 price is 42–173% above that. Costco's premium is
-company-specific; the sector is not generally priced this high. Peer rationale and method: [docs/comps.md](docs/comps.md).
-
-![Comps](outputs/charts/12_comps_multiples.png)
-
-## Sensitivity and scenarios
-
-| | Bear | Base | Bull |
-|---|---:|---:|---:|
-| DCF value per share | $263 | $337 | $400 |
-| vs. $979.88 price | −73% | −66% | −59% |
-
-- **Probability-weighted value (25/50/25):** $334.
-- **Most favourable WACC × growth cell:** 7.4% WACC with 4.0% growth gives $495.
-- **Exit-multiple cross-check:** the base case equals 10.3× FY2029 EBITDA; even 20× gives ~$585, and the price needs 35×.
-- **Growth vs. margin:** adding 2pp of comparable sales every year adds only ~4% to value; margin and the discount rate matter more.
-
-Grids, scenario definitions and "what would change the view": [docs/sensitivity.md](docs/sensitivity.md).
-
-![Football field](outputs/charts/14_football_field.png)
-
-## Excel model
-
-[`outputs/COST_Valuation_Model.xlsx`](outputs/COST_Valuation_Model.xlsx) is a fully linked workbook with 908 live formulas and no formula errors. It has 11 sheets:
-- **Cover:** headline outputs and a colour legend.
-- **Historicals:** every hardcoded number has a comment with its XBRL tag and filing link.
-- **Assumptions:** includes a Bear / Base / Bull switch.
-- **Forecast:** integrated three statements, with a balance check.
-- **Beta:** the regression is done with `SLOPE` on 60 monthly returns.
-- **WACC.**
-- **DCF.**
-- **Sensitivity:** live formula grids.
-- **Comps.**
-- **Summary.**
-- **Checks.**
-
-The **Checks** sheet reconciles every headline number (WACC, EV, value per share, EPS, multiples) to the Python pipeline; all checks read *ALL OK*. Switching the scenario reproduces the Python bear ($263) and bull ($400) values exactly.
-Colour convention: blue = input, black = formula, green = link to another sheet, yellow = key assumption.
-The workbook is generated by `python -m src.build_excel`.
-
-## Data
-
-FY2020–FY2024 historical data (and the FY2019 opening balance sheet) is extracted straight from the
-inline XBRL in Costco's 10-K filings. Every number carries a link to the exact tagged fact in the filing.
-Operating metrics (members, renewal rates, comparable sales) are stored with the verbatim sentence they
-come from, and are re-verified against the filing text on every build.
-320 values were cross-checked against the SEC companyfacts API, and all 320 match. See [docs/data_sources.md](docs/data_sources.md).
-
-| Dataset | File |
-|---|---|
-| Income statement / balance sheet / cash flow ($m) | `data/processed/income_statement.csv`, `balance_sheet.csv`, `cash_flow.csv` |
-| Segments and merchandise categories | `data/processed/segments.csv` |
-| Operating metrics | `data/processed/operating_metrics.csv` |
-| Every number with its source link | `data/processed/financials_long.csv`, `operating_metrics_long.csv` |
-
-## Reproducing
+Requires Python 3.10 or later. The slides also need Node.js.
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-export SEC_USER_AGENT="Your Name your.email@example.com"   # the SEC requires contact details
-python -m src.sec_fetch
-python -m src.extract_financials
-python -m src.operating_metrics
-python -m src.historical           # metrics -> outputs/tables/
-python -m src.extract_quarter      # Q1 FY2025 10-Q (latest quarter before the valuation date)
-python -m src.forecast             # three-statement forecast -> outputs/tables/forecast_*.csv
-python -m src.market_fetch         # market data (see note in docs/valuation.md if blocked)
-python -m src.wacc                 # cost of capital -> outputs/tables/wacc.csv
-python -m src.dcf                  # DCF -> outputs/tables/dcf_*.csv
+export SEC_USER_AGENT="Your Name your.email@example.com"   # the SEC asks for contact details
+python -m src.sec_fetch            # download filings and company data from SEC EDGAR
+python -m src.extract_financials   # financial statements from the 10-K filings
+python -m src.operating_metrics    # members, renewal rates, comparable sales (checked against filing text)
+python -m src.historical           # historical ratios -> outputs/tables/
+python -m src.extract_quarter      # latest quarter before the valuation date (10-Q, first quarter of fiscal 2025)
+python -m src.forecast             # five-year forecast -> outputs/tables/forecast_*.csv
+python -m src.market_fetch         # market data (see docs/valuation.md if the providers block the request)
+python -m src.wacc                 # required return -> outputs/tables/wacc.csv
+python -m src.dcf                  # discounted cash flow -> outputs/tables/dcf_*.csv
 python -m src.comps                # comparable companies -> outputs/tables/comps*.csv
-python -m src.sensitivity          # sensitivity grids and scenarios -> outputs/tables/sens_*.csv
+python -m src.sensitivity          # sensitivity tables and scenarios -> outputs/tables/sens_*.csv
 python -m src.build_excel          # Excel model -> outputs/COST_Valuation_Model.xlsx (open in Excel to recalculate)
-python -m src.charts               # chart pack -> outputs/charts/
+python -m src.charts               # charts -> outputs/charts/
 python -m src.build_memo           # memo -> outputs/COST_Investment_Memo.pdf (2 pages)
 node scripts/build_deck.js         # slides -> outputs/COST_Equity_Research_Deck.pptx (npm install pptxgenjs react react-dom react-icons sharp)
-python -m pytest -q
+python -m pytest -q                # run the automated checks
 jupyter notebook notebooks/01_historical_analysis.ipynb
 ```
+
+## Glossary
+
+| Term | Meaning |
+|---|---|
+| **Beta** | How much a share tends to move with the overall stock market. Below 1 means it moves less than the market. |
+| **Comparable companies** ("comps") | Valuing a company by applying the valuation ratios of similar listed companies. |
+| **Discounted cash flow (DCF)** | Valuing a business as the sum of its expected future cash flows, each reduced to today's value. |
+| **EBITDA** | Earnings before interest, taxes, depreciation and amortisation: a rough measure of operating cash profit. |
+| **Enterprise value** | The value of the whole business: shares plus debt, minus cash. |
+| **Equity risk premium** | The extra return investors demand for owning shares instead of safe government bonds. |
+| **Fiscal year** | Costco's financial year, which ends on the Sunday nearest 31 August. |
+| **Form 10-K / Form 10-Q** | The annual and quarterly reports that U.S. listed companies file with the Securities and Exchange Commission. |
+| **Free cash flow** | Cash from operations minus spending on new warehouses and equipment. |
+| **Last twelve months** | The most recent twelve months of results, which may cross two fiscal years. |
+| **Price-to-earnings ratio** | Share price divided by earnings per share: how many years of current profit the price pays for. |
+| **Return on invested capital** | Profit after tax as a percentage of the money invested in the business. |
+| **Reverse DCF** | Working backwards from the share price to find the growth or required return it implies. |
+| **Sensitivity analysis** | Recalculating the value while changing one or two assumptions at a time. |
+| **Terminal value** | The value of all cash flows after the forecast period (here, after 2029). It is 81% of Costco's value in this model. |
+| **Weighted average cost of capital (WACC)** | The annual return that shareholders and lenders together require; used to discount future cash. |
+| **Working capital** | Money tied up in inventory and unpaid customer bills, minus money owed to suppliers. Negative means suppliers and members fund the business. |
+| **XBRL** | The machine-readable tagging inside SEC filings that lets each number be read and linked automatically. |
