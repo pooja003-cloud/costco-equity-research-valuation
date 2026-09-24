@@ -18,3 +18,7 @@ venv/
 # data/raw/manifest.csv (committed) records the URL, date and SHA-256 of every file.
 data/raw/sec/
 data/raw/filings/
+
+# Node (slide generator)
+node_modules/
+package-lock.json

@@ -9,6 +9,20 @@ a DCF valuation, a WACC build, comparable-company analysis, sensitivity analysis
 **Valuation date:** 31 January 2025. All market inputs (share prices, risk-free rate, peer multiples) are as of this date.
 Only filings public by this date are used.
 
+## Deliverables
+
+| | |
+|---|---|
+| Two-page investment memo | [PDF](outputs/COST_Investment_Memo.pdf) · [markdown source](docs/investment_memo.md) |
+| Slides: thesis, valuation, risks and what would change my view | [PowerPoint](outputs/COST_Equity_Research_Deck.pptx) · [PDF](outputs/COST_Equity_Research_Deck.pdf) |
+| Fully linked Excel model | [COST_Valuation_Model.xlsx](outputs/COST_Valuation_Model.xlsx) |
+| Historical analysis notebook | [01_historical_analysis.ipynb](notebooks/01_historical_analysis.ipynb) |
+| Comps and sensitivity tables | [outputs/tables/](outputs/tables/) |
+| Methodology and sources | [docs/](docs/) · external reviews in [model_review_log.md](docs/model_review_log.md) |
+
+**Conclusion:** Costco is an exceptional business, but at $979.88 the price sits far above every fundamental estimate in
+this study. The base-case DCF is $337 per share (bear $263, bull $400). The price implies 7.0% growth forever after FY2029, or a 4.8% cost of capital.
+
 ## Repository layout
 
 ```
@@ -19,6 +33,7 @@ data/manual/     figures hand-collected from filing text, each with a citation
 data/processed/  clean, source-tracked datasets
 notebooks/       analysis notebooks
 docs/            methodology, data sources, assumptions
+scripts/         slide-deck generator (Node.js)
 outputs/         model, tables, charts, memo, slides
 tests/           data-integrity and model tests
 ```
@@ -146,6 +161,8 @@ python -m src.comps                # comparable companies -> outputs/tables/comp
 python -m src.sensitivity          # sensitivity grids and scenarios -> outputs/tables/sens_*.csv
 python -m src.build_excel          # Excel model -> outputs/COST_Valuation_Model.xlsx (open in Excel to recalculate)
 python -m src.charts               # chart pack -> outputs/charts/
+python -m src.build_memo           # memo -> outputs/COST_Investment_Memo.pdf (2 pages)
+node scripts/build_deck.js         # slides -> outputs/COST_Equity_Research_Deck.pptx (npm install pptxgenjs react react-dom react-icons sharp)
 python -m pytest -q
 jupyter notebook notebooks/01_historical_analysis.ipynb
 ```

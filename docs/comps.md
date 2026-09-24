@@ -14,7 +14,7 @@ No listed company copies Costco's model: membership fees plus warehouse retail a
 
 | Peer | Tier | Why it is comparable | Main differences |
 |---|---|---|---|
-| **BJ's Wholesale (BJ)** | 1 | The only other listed U.S. membership warehouse club: same fee-plus-low-margin model, bulk packs, gasoline | 5% of Costco's size; East Coast only; lower renewal rates and fees |
+| **BJ's Wholesale (BJ)** | 1 | The only other listed U.S. membership warehouse club: same fee-plus-low-margin model, bulk packs, gasoline | About 8% of Costco's revenue; regional (eastern U.S.) |
 | **Walmart (WMT)** | 1 | Owns Sam's Club, Costco's direct club competitor. Largest U.S. grocer, same everyday-low-price positioning, fights for the same household budget | Sam's Club is only ~13% of Walmart's revenue. Faster-growing e-commerce and advertising income, plus large international operations |
 | **Target (TGT)** | 2 | General merchandise plus grocery, U.S. suburban households, similar income demographic | Higher margins, no membership fee, more discretionary sales. Revenue flat since FY2022 |
 | **Kroger (KR)** | 2 | Largest U.S. traditional supermarket; the core grocery overlap; also runs fuel centers | Grocery only, lower growth. Balance sheet distorted by financing for the (terminated) Albertsons merger |
