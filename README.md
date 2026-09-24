@@ -210,30 +210,17 @@ tests/           101 automated checks on the data and the model
 
 ## Reproducing the results
 
-Requires Python 3.10 or later. The slides also need Node.js.
+Every output can be rebuilt from the original filings (Python 3.10 or later):
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-export SEC_USER_AGENT="Your Name your.email@example.com"   # the SEC asks for contact details
-python -m src.sec_fetch            # download filings and company data from SEC EDGAR
-python -m src.extract_financials   # financial statements from the 10-K filings
-python -m src.operating_metrics    # members, renewal rates, comparable sales (checked against filing text)
-python -m src.historical           # historical ratios -> outputs/tables/
-python -m src.extract_quarter      # latest quarter before the valuation date (10-Q, first quarter of fiscal 2025)
-python -m src.forecast             # five-year forecast -> outputs/tables/forecast_*.csv
-python -m src.market_fetch         # market data (see docs/valuation.md if the providers block the request)
-python -m src.wacc                 # required return -> outputs/tables/wacc.csv
-python -m src.dcf                  # discounted cash flow -> outputs/tables/dcf_*.csv
-python -m src.comps                # comparable companies -> outputs/tables/comps*.csv
-python -m src.sensitivity          # sensitivity tables and scenarios -> outputs/tables/sens_*.csv
-python -m src.build_excel          # Excel model -> outputs/COST_Valuation_Model.xlsx (open in Excel to recalculate)
-python -m src.charts               # charts -> outputs/charts/
-python -m src.build_memo           # memo -> outputs/COST_Investment_Memo.pdf (2 pages)
-node scripts/build_deck.js         # slides -> outputs/COST_Equity_Research_Deck.pptx (npm install pptxgenjs react react-dom react-icons sharp)
-python -m pytest -q                # run the automated checks
-jupyter notebook notebooks/01_historical_analysis.ipynb
+export SEC_USER_AGENT="Your Name your.email@example.com"
+python -m src.run_all        # rebuilds data, model, Excel, charts and memo
+python -m pytest -q          # 101 automated checks
 ```
+
+Each step, its options and its outputs are listed in [docs/reproducing.md](docs/reproducing.md).
 
 ## Glossary
 
