@@ -2,8 +2,6 @@
 
 > **Independent academic research and valuation case study; not investment advice.** See [DISCLAIMER.md](DISCLAIMER.md).
 
-## In plain English
-
 Costco runs membership warehouses: shoppers pay an annual fee, then buy in bulk at very low prices. On 31 January 2025,
 one Costco share cost **$979.88**.
 
