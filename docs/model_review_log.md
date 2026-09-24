@@ -6,7 +6,7 @@ the cause is identified: for example the mid-year convention, the tax rate, or h
 
 | # | Date | Phase | Reviewer / tool | Point raised | Our response | Model changed? |
 |---|---|---|---|---|---|---|
-| 1 | | 3 – Forecast | ClaudeFinanceLab: Three-Statement Forecasting | | | |
+| 1 | | 3 – Forecast | ClaudeFinanceLab: Three-Statement Model Checker | | | |
 | 2 | | 4 – WACC & DCF | ClaudeFinanceLab: DCF Model Builder | | | |
 | 3 | | 5 – Comparable companies | ClaudeFinanceLab: Comparable Company Analysis | | | |
 | 4 | | 8 – Memo and slides | ClaudeFinanceLab: Investment Committee Memo Writer | | | |

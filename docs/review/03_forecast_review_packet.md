@@ -1,7 +1,6 @@
 # Review packet: Phase 3 forecast
 
-Paste the prompt and the summary below into ClaudeFinanceLab. This review uses the **Automated Three-Statement Forecasting** skill, plus the
-"skeptical reviewer" prompt. Then record what it says in [`../model_review_log.md`](../model_review_log.md).
+For ClaudeFinanceLab's **Three-Statement Model Checker** skill (see [README.md](README.md) for how to run it). Then record what it says in [`../model_review_log.md`](../model_review_log.md).
 
 ## Prompt
 
