@@ -1,0 +1,2 @@
+# Keep the GitHub language bar about the code: the notebook is large because it stores its charts as images.
+*.ipynb linguist-detectable=false
